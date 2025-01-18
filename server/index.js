@@ -9,9 +9,10 @@ dotenv.config()
 app.use(cors())
 app.use(express.json())
 
-import { postSignup } from "./controller/user.js"
+import { postSignup,postLogin } from "./controller/user.js"
 
 app.post("/register",postSignup)
+app.post("/Login",postLogin)
 
 
 const port = process.env.PORT || 5000
