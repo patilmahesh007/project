@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Input from '../../components/Input.jsx'; 
 import { Toaster, toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate ,Link} from 'react-router-dom'; 
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -100,9 +100,9 @@ function Signup() {
         </button>
         <p className="text-center text-sm text-gray-500 mt-4">
           Already have an account?{' '}
-          <a href="/login" className="text-emerald-800 hover:underline">
+          <Link to="/login" className="text-emerald-800 hover:underline">
             Log In
-          </a>
+          </Link>
         </p>
       </form>
     </div>
