@@ -10,10 +10,14 @@ app.use(cors())
 app.use(express.json())
 
 import { postSignup,postLogin } from "./controller/user.js"
-
+import { forgotPassword, resetPassword } from "./controller/forgot.js"
 app.post("/register",postSignup)
 app.post("/Login",postLogin)
 
+
+app.post('/forgot-password', forgotPassword);
+
+app.post('/reset-password/:token', resetPassword);
 
 const port = process.env.PORT || 5000
 const uri = process.env.MONGO_URI

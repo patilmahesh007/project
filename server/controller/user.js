@@ -15,7 +15,7 @@ const postSignup = async (req, res) => {
             return res.json({ message: "User already exists" })
         }
         const hashedPassword = await bcrypt.hash(password, 10)
-        const newUser = new User({ user, password: hashedPassword, email,role:"user" })
+        const newUser = new User({ user, password: hashedPassword, email, role: "user" })
         await newUser.save()
         res.json({ success: true, message: "User registered successfully" })
     }
@@ -38,15 +38,15 @@ const postLogin = async (req, res) => {
         if (!isPasswordValid) {
             return res.json({ message: "Invalid credentials" })
         }
-const jwtToken=jwt.sign({id:user._id,role:user.role,email:user.email},process.env.JWT_SECRET)
+        const jwtToken = jwt.sign({ id: user._id, role: user.role, email: user.email }, process.env.JWT_SECRET)
 
-res.setHeader("Authorization",`Bearer ${jwtToken}`)
+        res.setHeader("Authorization", `Bearer ${jwtToken}`)
 
-        res.json({ success: true, message: "Login successful",token:jwtToken })
+        res.json({ success: true, message: "Login successful", token: jwtToken })
     }
     catch (err) {
         res.json({ message: err.message })
     }
 }
 
-export { postSignup ,postLogin}
+export { postSignup, postLogin }
