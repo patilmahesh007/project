@@ -11,6 +11,10 @@ app.use(express.json())
 
 import { postSignup,postLogin } from "./controller/user.js"
 import { forgotPassword, resetPassword } from "./controller/forgot.js"
+
+app.get("/health", (req, res) => {
+    res.json({ success: true, message: "Server is healthy" })
+})
 app.post("/register",postSignup)
 app.post("/Login",postLogin)
 
