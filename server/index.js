@@ -8,6 +8,7 @@ const app = express()
 dotenv.config()
 app.use(cors())
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 import { postSignup,postLogin } from "./controller/user.js"
 import { forgotPassword, resetPassword } from "./controller/forgot.js"
