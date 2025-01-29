@@ -2,33 +2,33 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Input from '../../components/Input.jsx';
 import { Toaster, toast } from 'react-hot-toast';
-import { useNavigate ,Link} from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Login() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
+  let toastId = null;
 
   const inputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value ,[password]: value });
+    setFormData({ ...formData, [name]: value });
   };
 
   const validateForm = () => {
     const { email, password } = formData;
+
+    toast.dismiss();
+
     if (!email || !password) {
-      toast.error('All fields are required.');
+      toast.error('All fields are required.', { duration: 2000 });
       return false;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      toast.error('Invalid email format.');
+      toast.error('Invalid email format.', { duration: 2000 });
       return false;
     }
     if (password.length < 6) {
-      toast.error('Password must be at least 6 characters.');
+      toast.error('Password must be at least 6 characters.', { duration: 2000 });
       return false;
     }
     return true;
@@ -39,27 +39,37 @@ function Login() {
 
     if (!validateForm()) return;
 
+    toast.dismiss();
+    
+    if (!toastId) {
+      toastId = toast.loading('Logging in...', { duration: 2000 });
+    }
+
     try {
-      const response = await axios.post('http://localhost:5220/login', formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, formData);
 
       if (response.data.success) {
         const { token, user } = response.data;
-        localStorage.setItem('authToken', token); 
+        localStorage.setItem('authToken', token);
         localStorage.setItem('user', JSON.stringify(user));
 
-        toast.success('Login successful! 🎉');
+        toast.dismiss(toastId);
+        toast.success('Login successful! 🎉', { duration: 2000 });
+
         setFormData({ email: '', password: '' });
 
-        setTimeout(() => {
-          navigate('/dashboard'); 
-        }, 2000);
+        setTimeout(() => navigate('/dashboard'), 1500);
       } else {
-        toast.error(response.data.message || 'Login failed.');
+        toast.dismiss(toastId);
+        toast.error(response.data.message || 'Login failed.', { duration: 2000 });
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || 'An error occurred. Please try again.'
-      );
+      toast.dismiss(toastId);
+      toast.error(error.response?.data?.message || 'An error occurred. Please try again.', {
+        duration: 2000,
+      });
+    } finally {
+      toastId = null; 
     }
   };
 
@@ -68,9 +78,7 @@ function Login() {
       <Toaster position="top-center" reverseOrder={false} />
 
       <form onSubmit={formSubmit} className="bg-white shadow-md rounded-lg p-8 w-[400px]">
-        <h1 className="text-4xl font-bold text-center text-gray-700 mb-6">
-          Login
-        </h1>
+        <h1 className="text-4xl font-bold text-center text-gray-700 mb-6">Login</h1>
         <Input
           label="Email"
           placeholder="Enter your email"

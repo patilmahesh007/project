@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Input from '../../components/Input.jsx'; 
+import Input from '../../components/Input.jsx';
 import { Toaster, toast } from 'react-hot-toast';
-import { useNavigate ,Link} from 'react-router-dom'; 
+import { useNavigate, Link } from 'react-router-dom';
 
 function Signup() {
-  const [formData, setFormData] = useState({
-    user: '',
-    email: '',
-    password: '',
-  });
-
+  const [formData, setFormData] = useState({ user: '', email: '', password: '' });
   const navigate = useNavigate();
+  let toastId = null;
 
   const inputChange = (e) => {
     const { name, value } = e.target;
@@ -20,16 +16,19 @@ function Signup() {
 
   const validateForm = () => {
     const { user, email, password } = formData;
+
+    toast.dismiss();
+
     if (!user || !email || !password) {
-      toast.error('All fields are required.');
+      toast.error('All fields are required.', { duration: 2000 });
       return false;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      toast.error('Invalid email format.');
+      toast.error('Invalid email format.', { duration: 2000 });
       return false;
     }
     if (password.length < 6) {
-      toast.error('Password must be at least 6 characters.');
+      toast.error('Password must be at least 6 characters.', { duration: 2000 });
       return false;
     }
     return true;
@@ -40,23 +39,33 @@ function Signup() {
 
     if (!validateForm()) return;
 
+    toast.dismiss();
+
+    if (!toastId) {
+      toastId = toast.loading('Signing up...', { duration: 2000 });
+    }
+
     try {
-      const response = await axios.post('http://localhost:5220/register', formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`, formData);
 
       if (response.data.success) {
-        toast.success('Signup successful! 🎉 Proceed to login');
+        toast.dismiss(toastId);
+        toast.success('Signup successful! 🎉 Redirecting...', { duration: 2000 });
+
         setFormData({ user: '', email: '', password: '' });
 
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000); 
+        setTimeout(() => navigate('/login'), 1500);
       } else {
-        toast.error(response.data.message || 'Signup failed.');
+        toast.dismiss(toastId);
+        toast.error(response.data.message || 'Signup failed.', { duration: 2000 });
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || 'An error occurred. Please try again.'
-      );
+      toast.dismiss(toastId);
+      toast.error(error.response?.data?.message || 'An error occurred. Please try again.', {
+        duration: 2000,
+      });
+    } finally {
+      toastId = null;
     }
   };
 
@@ -65,9 +74,7 @@ function Signup() {
       <Toaster position="top-center" reverseOrder={false} />
 
       <form onSubmit={formSubmit} className="bg-white shadow-md rounded-lg p-8 w-[400px]">
-        <h1 className="text-4xl font-bold text-center text-gray-700 mb-6">
-          Register
-        </h1>
+        <h1 className="text-4xl font-bold text-center text-gray-700 mb-6">Register</h1>
         <Input
           label="Name"
           placeholder="Enter your name"
