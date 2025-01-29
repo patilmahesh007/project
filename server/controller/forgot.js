@@ -1,15 +1,14 @@
-import crypto from 'crypto'; // For generating secure tokens
-import bcrypt from 'bcrypt'; // For hashing passwords
-import User from './../model/user.model.js'; // User model
-import sendEmail from '../utils/sendEmail.js'; // Email utility
+import crypto from 'crypto'; 
+import bcrypt from 'bcrypt'; 
+import User from './../model/user.model.js'; 
+import sendEmail from '../utils/sendEmail.js'; 
 
-// Forgot Password
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
         return res.status(400).json({ success: false, message: 'Invalid email format.' });
     }
-    const user = null
+    let user = null
     try {
         user = await User.findOne({ email });
         if (!user) {
@@ -56,7 +55,6 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-//  Reset Password
 export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { newPassword } = req.body;
