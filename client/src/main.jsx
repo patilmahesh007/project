@@ -17,6 +17,7 @@ root.render(
       <Route path="/login" element={<Login />} />
       <Route path="/ForgotPassword" element={<ForgotPassword />} />
       <Route path="/ResetPassword" element={<ResetPassword />} />
+      <Route path="/*" element={<p>404</p>} />
     </Routes>
   </Router>
 );
