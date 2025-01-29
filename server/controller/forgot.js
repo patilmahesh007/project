@@ -23,7 +23,7 @@ export const forgotPassword = async (req, res) => {
         user.resetPasswordToken = hashedToken;
         user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
 
-        await user.save({ validateBeforeSave: false }); // Avoids unnecessary validation errors
+        await user.save({ validateBeforeSave: false }); 
 
         const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
         const message = `
