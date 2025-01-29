@@ -22,7 +22,10 @@ app.post("/Login",postLogin)
 
 app.post('/forgot-password', forgotPassword);
 
-app.post('/reset-password/:token', resetPassword);
+app.get('/*', (req, res) => {
+    res.status(404).json({ success: false, message: 'Not Found' });
+    
+});
 
 const port = process.env.PORT || 5000
 const uri = process.env.MONGO_URI
