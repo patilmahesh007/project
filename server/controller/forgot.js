@@ -25,7 +25,6 @@ export const forgotPassword = async (req, res) => {
 
         await user.save({ validateBeforeSave: false });
 
-        // Use environment variable here
         const resetUrl = `${process.env.FRONTEND_URL}/ResetPassword/${resetToken}`;
         
         const message = `
@@ -33,7 +32,7 @@ export const forgotPassword = async (req, res) => {
             ${resetUrl}
             If you did not request this, please ignore this email.
         `;
-
+console.log(message)
         try {
             await sendEmail({
                 email: user.email,
