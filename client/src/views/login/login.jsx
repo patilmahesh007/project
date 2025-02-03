@@ -52,6 +52,7 @@ function Login() {
         const { token, user } = response.data;
         localStorage.setItem('authToken', token);
         localStorage.setItem('user', JSON.stringify(user));
+        console.log(token, user);
 
         toast.dismiss(toastId);
         toast.success('Login successful! 🎉', { duration: 2000 });
@@ -86,6 +87,9 @@ function Login() {
           type="email"
           value={formData.email}
           onChange={inputChange}
+          autoComplete="username"
+
+
         />
         <Input
           label="Password"
@@ -94,6 +98,7 @@ function Login() {
           type="password"
           value={formData.password}
           onChange={inputChange}
+          autoComplete="current-password"
         />
         <button
           type="submit"
