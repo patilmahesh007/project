@@ -36,13 +36,13 @@ const postLogin = async (req, res) => {
         }
         const isPasswordValid = await bcrypt.compare(password, user.password)
         if (!isPasswordValid) {
-            return res.json({ message: "Invalid credentials" })
+            return res.json({ message: "Invalid " })
         }
         const jwtToken = jwt.sign({ id: user._id, role: user.role, email: user.email }, process.env.JWT_SECRET)
 
         res.setHeader("Authorization", `Bearer ${jwtToken}`)
 
-        res.json({ success: true, message: "Login successful", token: jwtToken })
+        res.json({ success: true, message: "Login successful", token: jwtToken, user: user.email&&user.user&&user.role })
     }
     catch (err) {
         res.json({ message: err.message })
