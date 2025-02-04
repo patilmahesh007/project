@@ -21,8 +21,13 @@ const userSchema = new Schema(
     resetPasswordExpire: {
       type: Date, 
     },
+    dailyQr: {
+      qrCode: { type: String }, 
+      expiryDate: { type: Date }, 
+    },
   },
   { timestamps: true }
 );
+
 
 export default model("user", userSchema);
