@@ -30,7 +30,7 @@ const postLogin = async (req, res) => {
         return res.json({ message: "all fields are required" })
     }
     try {
-        const user = await User.findOne({ email })
+        let user = await User.findOne({ email })
         if (!user) {
             return res.json({ message: "User not found" })
         }
@@ -41,8 +41,8 @@ const postLogin = async (req, res) => {
         const jwtToken = jwt.sign({ id: user._id, role: user.role, email: user.email }, process.env.JWT_SECRET)
 
         res.setHeader("Authorization", `Bearer ${jwtToken}`)
-
-        res.json({ success: true, message: "Login successful", token: jwtToken, user: user.email&&user.user&&user.role })
+        user = { _id: user._id, user: user.user, email: user.email, role: user.role }
+        res.json({ success: true, message: "Login successful", token: jwtToken, user })
     }
     catch (err) {
         res.json({ message: err.message })

@@ -7,6 +7,11 @@ const qrSchema = new Schema(
       ref: "user", 
       required: true,
     },
+    qrId: {  
+      type: String,
+      required: true,
+      unique: true,
+    },
     qrCode: {
       type: String, 
       required: true,
