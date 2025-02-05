@@ -1,81 +1,105 @@
-import { useEffect, useRef, useState } from "react";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { Html5QrcodeScanner } from "html5-qrcode";
+import { toast, Toaster } from "react-hot-toast";
 
-const QRScanner = ({ onScanSuccess }) => {
-  const scannerRef = useRef(null);
-  const [message, setMessage] = useState("");
+const ScanQR = () => {
+  const [scanningComplete, setScanningComplete] = useState(false);
   const [error, setError] = useState("");
+  const [scanResult, setScanResult] = useState("");
+
+  const localUser = JSON.parse(localStorage.getItem("user")) || {};
+  const localUserId = localUser._id || "";
+
+  const scannerRef = useRef(null);
+
+  const processScanResult = async (decodedText) => {
+    try {
+      const parsedData = JSON.parse(decodedText);
+      const { qrId, userId } = parsedData;
+      const finalUserId = localUserId || userId;
+      await scanQRCode(qrId, finalUserId);
+    } catch (err) {
+      console.error("Failed to parse QR data:", err);
+      toast.error("Invalid QR code format.");
+    }
+  };
+
+  const scanQRCode = async (qrId, userId) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/qr/scan`,
+        { qrId, userId }
+      );
+      setScanResult(response.data.message);
+      toast.success(response.data.message);
+      setScanningComplete(true);
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch((error) =>
+          console.error("Failed to clear scanner:", error)
+        );
+      }
+    } catch (err) {
+      console.error("Error scanning QR code:", err);
+      const errMsg = err.response?.data?.message || "Error scanning QR code";
+      setError(errMsg);
+      toast.error(errMsg);
+    }
+  };
 
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner(
-      "qr-scanner-container",
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      false
-    );
-
-    scanner.render(
-      async (decodedText) => {
-        scanner.clear();
-        setError("");
-        setMessage("🔍 Verifying QR code...");
-
-        console.log("Scanned QR Code:", decodedText);
-
-        const [extractedUserId] = decodedText.split("-");
-        console.log("Extracted userId:", extractedUserId);
-
-        try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_URL}/qr/scan`,
-            { userId: extractedUserId, qrCode: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAYAAAB1PADUAAAAAklEQVR4AewaftIAAATaSURBVO3BQY4cSRIEQdNA/f/Lujz6KYBEevU2hyaCf6RqyUnVopOqRSdVi06qFp1ULTqpWnRSteikatFJ1aKTqkUnVYtOqhadVC06qVp0UrXok5eA/CQ1N0AmNROQSc0TQG7U3ACZ1NwA+Ulq3jipWnRSteikatEny9RsAvIGkE1q3lDzhppNQDadVC06qVp0UrXoky8D8oSaJ4BMam6ATEAmNROQSc0EZFIzAZnUTEAmNU8AeULNN51ULTqpWnRSteiTf4yaJ9TcqJmAPKHmv+SkatFJ1aKTqkWf/McB+SY1N2omIDdq/mYnVYtOqhadVC365MvU/CQgk5oJyDepmYBMaiYgb6j5TU6qFp1ULTqpWvTJMiD/T2omIJOaCcikZgIyqZmATGq+CchvdlK16KRq0UnVok9eUvObAHkDyKRmAjKpuVHzhpq/yUnVopOqRSdViz55CcikZgKySc2kZgIyqZmA3KiZgDwB5EbNpOYGyCY133RSteikatFJ1SL8I4uA3Kj5SUAmNROQSc0bQH4TNROQGzVvnFQtOqladFK16JOXgHwTkCfU3ACZ1DwB5EbNE0Bu1NwAmdRMQCY133RSteikatFJ1aJPlqmZgExAbtRMam6ATEAmNROQJ4BMar5JzQ2QGyCTmgnIjZo3TqoWnVQtOqlahH/kBSBvqJmA3Kh5Asik5g0gk5obIJOaGyCTmgnIpOYGyKTmm06qFp1ULTqpWvTJD1MzAZnU3AC5UfMGkE1qJiA3aiYgk5oJyKRmUvOTTqoWnVQtOqla9MlLam6ATEBugDyhZgJyA+QnAZnU3ACZ1LwB5EbNppOqRSdVi06qFn3yEpBJzY2aN4BMQG7UPAFkUjMB+SY1T6iZgExqJiDfdFK16KRq0UnVok9eUjMBmdRMQCY1N0AmNTdAngAyqZmATGpugDwB5EbNBGRSM6mZgExqvumkatFJ1aKTqkWfvATkCTUTkBs1T6iZgExqnlAzAblRcwNkUnMDZFIzAblRcwNkUvPGSdWik6pFJ1WLPlmmZgJyo+YGyG+iZgLyhJoJyKRmUjMBuVEzAZnUTGo2nVQtOqladFK16JMvUzMBuQEyqZmATGpugNyouQFyo2YCcqPmCSBPAJnUTEBu1LxxUrXopGrRSdWiT345IJOaGyA3QG7UTGomIBOQTUDeUDMB+UknVYtOqhadVC3CP/IXA/KGmgnIE2omIG+oeQLIpOYGyI2aN06qFp1ULTqpWvTJS0B+kppJzQ2QTWomIJOaGyBPAJnUPAFkUjMB2XRSteikatFJ1aJPlqnZBOQGyI2aCcgTap4AMqmZ1ExAbtQ8AWRSMwGZ1Gw6qVp0UrXopGrRJ18G5Ak1b6h5AsikZgIyqZnUbALyhpoJyE86qVp0UrXopGrRJ/8YNU+omYA8oeZGzRNAJjU3aiYg33RSteikatFJ1aJP/jFAJjUTkE1AbtRMQG7UTEB+k5OqRSdVi06qFn3yZWq+Sc0E5Akgk5obIDdqJiCTmgnIjZoJyKTmNzmpWnRSteikahH+kReA/CQ1E5AbNROQSc0bQN5Q8wSQTWo2nVQtOqladFK1CP9I1ZKTqkUnVYtOqhadVC06qVp0UrXopGrRSdWik6pFJ1WLTqoWnVQtOqladFK16KRq0f8Ao6k7QypeajIAAAAASUVORK5CYII=" }
-          );
-
-          console.log("Full Server Response:", response);
-
-          if (!response.data || !response.data.scanTime) {
-            throw new Error("Invalid server response format");
+    if (!scanningComplete) {
+      const config = { fps: 10, qrbox: 250 };
+      const scanner = new Html5QrcodeScanner("reader", config, false);
+      scanner.render(
+        (decodedText) => {
+          console.log("QR Code Scanned:", decodedText);
+          if (!scanningComplete) {
+            processScanResult(decodedText);
           }
-
-          setMessage(`✅ Entry granted at: ${response.data.scanTime}`);
-          onScanSuccess(response.data);
-        } catch (err) {
-          console.error("Scan Error:", err);
-
-          if (err.response) {
-            console.log("Error Response from Server:", err.response);
-            setError(err.response.data?.message || "❌ Invalid QR Code");
-          } else if (err.request) {
-            console.log("No response received from the server:", err.request);
-            setError("⚠️ No response from server. Please check your connection.");
-          } else {
-            console.log("Unexpected Error:", err.message);
-            setError("⚠️ Unexpected error. Please try again.");
-          }
+        },
+        (scanError) => {
+          console.warn("QR Scan Error:", scanError);
         }
-      },
-      (err) => {
-        setError("⚠️ Scanning failed. Try again.");
-      }
-    );
-
-    scannerRef.current = scanner;
-
-    return () => {
-      if (scannerRef.current) {
-        scannerRef.current.clear();
-      }
-    };
-  }, [onScanSuccess]);
+      );
+      scannerRef.current = scanner;
+      return () => {
+        scanner.clear().catch((error) =>
+          console.error("Failed to clear html5-qrcode scanner:", error)
+        );
+      };
+    }
+  }, [scanningComplete]);
 
   return (
-    <div>
-      <h2>Scan QR Code</h2>
-      <div id="qr-scanner-container"></div>
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+      <Toaster position="top-center" />
+      <h1 className="text-4xl font-bold mb-8">Scan QR Code</h1>
+      {scanningComplete ? (
+        <div className="flex flex-col items-center">
+          <img
+            src="https://cdn.dribbble.com/users/4358240/screenshots/14825308/media/84f51703b2bfc69f7e8bb066897e26e0.gif"
+            alt="Scan Successful"
+            className="w-64 h-auto mb-4"
+          />
+          <p className="text-green-600 text-xl font-medium">
+            Entry granted. No further scans.
+          </p>
+        </div>
+      ) : (
+        <div
+          id="reader"
+          className="w-full max-w-md mx-auto border-4 border-dashed border-gray-300 rounded-lg p-4 bg-white shadow-lg"
+        ></div>
+      )}
+      {scanResult && (
+        <p className="mt-4 text-green-600 font-semibold">{scanResult}</p>
+      )}
+      {error && (
+        <p className="mt-4 text-red-600 font-semibold">{error}</p>
+      )}
     </div>
   );
 };
 
-export default QRScanner;
+export default ScanQR;

@@ -8,9 +8,8 @@ const Navbar = ({ bg }) => {
         { name: 'Services', path: '/services' },
         { name: 'Contact', path: '/contact' },
     ];
-
     return (
-        <nav className={`fixed w-full top-0 left-0 backdrop-blur-md bg-${bg} h-18 flex items-center px-6 shadow-md z-50`}>
+        <nav className={`fixed w-full top-0 left-0 backdrop-blur-md bg-${bg}  h-18 flex items-center px-6 shadow-md z-50`}>
             <ul className="flex items-center justify-between w-full">
                 <NavLink
                     to="/"

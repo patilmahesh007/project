@@ -11,6 +11,7 @@ import Login from './views/login/login.jsx';
 import ForgotPassword from './views/forgot/forgot.jsx';
 import ResetPassword from './views/reset/reset.jsx';
 import ScanPage from './views/scan/ScanPage.jsx';
+import QRPage from './views/qrgenerate/QRPage.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -23,6 +24,7 @@ root.render(
       <Route path="/ForgotPassword" element={<ForgotPassword />} />
       <Route path="/ResetPassword/:token" element={<ResetPassword />} />
       <Route path="/scan" element={<ScanPage />} />
+      <Route path="/generate" element={<QRPage />} />
 
       
       <Route path="/*" element={<p>404</p>} />

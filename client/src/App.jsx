@@ -33,18 +33,18 @@ function App() {
         <h1 className="text-3xl md:text-4xl lg:text-xl font-bold">"Don't Just Take Our Word—Hear It From the Iron Warriors!"
         </h1>
         <div className="flex gap-4"><ReviewCard
-        review="I've never felt better! The trainers push you beyond limits while keeping it fun. The atmosphere is electric, and the equipment is top-notch. The community is supportive, making workouts something to look forward to every day. This gym is my second home now!" name="Mahesh patil" designation="trainer" image="https://i.pinimg.com/236x/f9/a7/a3/f9a7a30e3f6cada77cbd30f47f5a430f.jpg"
+          review="I've never felt better! The trainers push you beyond limits while keeping it fun. The atmosphere is electric, and the equipment is top-notch. The community is supportive, making workouts something to look forward to every day. This gym is my second home now!" name="Mahesh patil" designation="trainer" image="https://i.pinimg.com/236x/f9/a7/a3/f9a7a30e3f6cada77cbd30f47f5a430f.jpg"
         />
-        <ReviewCard
-        review="This gym changed my life! The workouts are challenging yet rewarding. The trainers genuinely care about your progress. I love the energy here—everyone is motivated, and it keeps me pushing harder. If you want real results, this is the place to be!" name="Sarthak nawale" designation="trainer" image="https://i.pinimg.com/236x/6e/2a/5f/6e2a5f5804e052f260902deb9108cdc8.jpg"
-        />
-        <ReviewCard
-        review="Absolutely love this gym! The vibe is unbeatable, and every session leaves me feeling stronger. The trainers provide excellent guidance, and the facilities are always clean and well-maintained. Joining was the best decision I’ve made for my health!" name="Prathamesh " designation="trainer" image="https://i.pinimg.com/236x/e4/4d/7a/e44d7ad06e35faef641a5981af86f218.jpg"
-        />
-        
+          <ReviewCard
+            review="This gym changed my life! The workouts are challenging yet rewarding. The trainers genuinely care about your progress. I love the energy here—everyone is motivated, and it keeps me pushing harder. If you want real results, this is the place to be!" name="Sarthak nawale" designation="trainer" image="https://i.pinimg.com/236x/6e/2a/5f/6e2a5f5804e052f260902deb9108cdc8.jpg"
+          />
+          <ReviewCard
+            review="Absolutely love this gym! The vibe is unbeatable, and every session leaves me feeling stronger. The trainers provide excellent guidance, and the facilities are always clean and well-maintained. Joining was the best decision I’ve made for my health!" name="Prathamesh " designation="trainer" image="https://i.pinimg.com/236x/e4/4d/7a/e44d7ad06e35faef641a5981af86f218.jpg"
+          />
+
         </div>
       </div>
-<Footer/>
+      <Footer />
     </div>
   );
 }

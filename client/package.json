@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroicons/react": "^1.0.6",
     "axios": "^1.7.9",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.474.0",
