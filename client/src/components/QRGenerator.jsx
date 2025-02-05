@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
+import image from "../assets/image.webp";
 
 const GenerateQR = () => {
   const [generatedQR, setGeneratedQR] = useState(null);
-
   const localUser = JSON.parse(localStorage.getItem("user")) || {};
 
   const generateQRCode = async () => {
@@ -32,26 +32,30 @@ const GenerateQR = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
+    <div className="w-screen h-screen overflow-hidden bg-gray-100 flex flex-col items-center justify-center p-4">
       <Toaster position="top-center" />
-      <h1 className="text-4xl font-bold mb-8">Generate QR Code</h1>
-      <button
-        onClick={generateQRCode}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded shadow transition-colors mb-4"
-      >
-        Generate QR
-      </button>
+      
+      {!generatedQR && (
+        <button
+          onClick={generateQRCode}
+          className="bg-orange-500 text-white  px-12 py-5 rounded-lg font-semibold text-lg transition duration-300 hover:bg-orange-600 active:bg-orange-700"
+        >
+          Generate QR
+        </button>
+      )}
+
       {generatedQR && (
-        <div className="mt-4 p-4 bg-white rounded-lg shadow-md flex flex-col items-center">
-          <h3 className="text-2xl font-semibold mb-4">Your QR Code</h3>
+        <div className="relative w-[500px] h-[800px]">
+          <img
+            src={image}
+            alt="Boxer holding Mona Lisa frame"
+            className="w-full h-full object-cover"
+          />
           <img
             src={generatedQR.qrCode}
             alt="Generated QR Code"
-            className="w-48 h-48 mb-4 object-contain"
+            className="absolute top-[0%] left-[26%] w-[50%] h-[50%] object-contain "
           />
-          <p className="text-lg">
-            <strong>QR ID:</strong> {generatedQR.qrId}
-          </p>
         </div>
       )}
     </div>
