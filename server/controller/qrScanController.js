@@ -19,7 +19,7 @@ export const generateQRCode = async (req, res) => {
 
       if (existingQR) return res.json({ qrCode: existingQR.qrCode });
 
-      const qrData = `${userId}-${Date.now()}`;
+      const qrData = `${userId}-${Date.now()} `;
       const qrCode = await QRCode.toDataURL(qrData);
 
       const expiryDate = moment().endOf("day").toDate();
