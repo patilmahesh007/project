@@ -4,8 +4,8 @@ import logo from '../assets/logo.png';
 
 const Navbar = ({ bg }) => {
     const navItems = [
-        { name: 'About', path: '/about' },
-        { name: 'Services', path: '/services' },
+        { name: 'Scan', path: '/scan' },
+        { name: 'Generate', path: '/generate' },
         { name: 'Contact', path: '/contact' },
     ];
     return (

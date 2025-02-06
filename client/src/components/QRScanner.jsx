@@ -72,9 +72,9 @@ const ScanQR = () => {
   }, [scanningComplete]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+    <div className=" h-[65vh] flex flex-col items-center justify-center bg-black p-6">
       <Toaster position="top-center" />
-      <h1 className="text-4xl font-bold mb-8">Scan QR Code</h1>
+      <h1 className="text-4xl font-bold text-emerald-400 mb-8">Scan QR Code</h1>
       {scanningComplete ? (
         <div className="flex flex-col items-center">
           <img
@@ -82,7 +82,7 @@ const ScanQR = () => {
             alt="Scan Successful"
             className="w-64 h-auto mb-4"
           />
-          <p className="text-green-600 text-xl font-medium">
+          <p className="text-emerald-400 text-xl font-medium">
             Entry granted. No further scans.
           </p>
         </div>
@@ -93,7 +93,7 @@ const ScanQR = () => {
         ></div>
       )}
       {scanResult && (
-        <p className="mt-4 text-green-600 font-semibold">{scanResult}</p>
+        <p className="mt-4 text- font-semibold">{scanResult}</p>
       )}
       {error && (
         <p className="mt-4 text-red-600 font-semibold">{error}</p>
