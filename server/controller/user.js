@@ -30,8 +30,7 @@ const postSignup = async (req, res) => {
 };
 
 const postLogin = async (req, res) => {
-    console.log("Incoming request headers:", req.headers); // Debug request headers
-    console.log("Incoming request body:", req.body); // Debug request body
+
   const { email, password } = req.body;
   if (!email || !password) {
     return res.json({ message: "All fields are required" });
@@ -48,7 +47,7 @@ const postLogin = async (req, res) => {
       return res.json({ message: "Invalid credentials" });
     }
     
-    const userResponse = {
+    const userResponse = { 
       _id: user._id,
       name: user.user, 
       email: user.email,

@@ -47,12 +47,13 @@ function Login() {
 
     try {
       const response = await api.post('/auth/login', formData);
-      console.log(response,"response");
+      console.log(response, "response");
       if (response.data.success) {
         const { token, userResponse } = response.data;
         localStorage.setItem('authToken', token);
         localStorage.setItem('user', JSON.stringify(userResponse));
-        console.log(token, user);
+        // Corrected: log userResponse instead of undefined 'user'
+        console.log(token, userResponse);
 
         toast.dismiss(toastId);
         toast.success('Login successful! 🎉', { duration: 2000 });
@@ -88,8 +89,6 @@ function Login() {
           value={formData.email}
           onChange={inputChange}
           autoComplete="username"
-
-
         />
         <Input
           label="Password"

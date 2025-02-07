@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
+import image from "../assets/image.webp";
+import api from "../utils/api";
 
 const GenerateQR = () => {
   const [generatedQR, setGeneratedQR] = useState(null);
@@ -13,13 +14,18 @@ const GenerateQR = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/qr/generate`,
-        { userId: localUser._id }
-      );
+      // Since your backend extracts the user ID from the session,
+      // you don't need to send it here.
+      const response = await api.post("/qr/generate", {});
 
-      if (response.data.qrCode && response.data.qrId) {
-        setGeneratedQR(response.data);
+      // The response structure is: { success, message, data: { qrId, qrCode } }
+      if (
+        response.data.success &&
+        response.data.data &&
+        response.data.data.qrCode &&
+        response.data.data.qrId
+      ) {
+        setGeneratedQR(response.data.data);
         toast.success("QR Code generated successfully!");
       } else {
         toast.error("Failed to generate QR code.");
@@ -34,24 +40,27 @@ const GenerateQR = () => {
     <div className="min-h-[70vh] overflow-hidden bg-black flex flex-col items-center justify-center p-4">
       <Toaster position="top-center" />
 
-      {!generatedQR && (
+      {!generatedQR ? (
         <button
           onClick={generateQRCode}
           className="bg-orange-500 text-white px-12 py-5 rounded-lg font-semibold text-lg transition duration-300 hover:bg-orange-600 active:bg-orange-700"
         >
           Generate QR
         </button>
-      )}
-
-      {generatedQR ? (
+      ) : (
         <div className="relative w-[500px] h-[800px] flex items-center justify-center">
+          <img
+            src={image}
+            alt="Boxer holding Mona Lisa frame"
+            className="w-full h-full object-cover"
+          />
           <img
             src={generatedQR.qrCode}
             alt="Generated QR Code"
-            className="w-[50%] h-[50%] object-contain"
+            className="absolute top-[0%] left-[26%] w-[50%] h-[50%] object-contain"
           />
         </div>
-      ):<h1>asddad</h1> }
+      )}
     </div>
   );
 };

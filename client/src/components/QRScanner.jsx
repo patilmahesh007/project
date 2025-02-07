@@ -1,38 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { toast, Toaster } from "react-hot-toast";
+import api from "../utils/api";
 
 const ScanQR = () => {
   const [scanningComplete, setScanningComplete] = useState(false);
   const [error, setError] = useState("");
   const [scanResult, setScanResult] = useState("");
-
-  const localUser = JSON.parse(localStorage.getItem("user")) || {};
-  const localUserId = localUser._id || "";
-
+  
+  const isScanning = useRef(false);
   const scannerRef = useRef(null);
 
   const processScanResult = async (decodedText) => {
+    if (isScanning.current) return; 
+    isScanning.current = true;
     try {
       const parsedData = JSON.parse(decodedText);
-      const { qrId, userId } = parsedData;
-      const finalUserId = localUserId || userId;
-      await scanQRCode(qrId, finalUserId);
+      const { qrId } = parsedData;
+      await scanQRCode(qrId);
     } catch (err) {
       console.error("Failed to parse QR data:", err);
-      toast.error("Invalid QR code format.");
+      toast.dismiss();
+      toast.error("Invalid QR code format.", { duration: 3000 });
+      isScanning.current = false;
     }
   };
 
-  const scanQRCode = async (qrId, userId) => {
+  const scanQRCode = async (qrId) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/qr/scan`,
-        { qrId, userId }
-      );
+      const response = await api.post("/qr/scan", { qrId });
       setScanResult(response.data.message);
-      toast.success(response.data.message);
+      toast.dismiss();
+      toast.success(response.data.message, { duration: 3000 });
       setScanningComplete(true);
       if (scannerRef.current) {
         scannerRef.current.clear().catch((error) =>
@@ -43,7 +42,9 @@ const ScanQR = () => {
       console.error("Error scanning QR code:", err);
       const errMsg = err.response?.data?.message || "Error scanning QR code";
       setError(errMsg);
-      toast.error(errMsg);
+      toast.dismiss();
+      toast.error(errMsg, { duration: 3000 });
+      isScanning.current = false;
     }
   };
 
@@ -72,7 +73,7 @@ const ScanQR = () => {
   }, [scanningComplete]);
 
   return (
-    <div className=" h-[65vh] flex flex-col items-center justify-center bg-black p-6">
+    <div className="min-h-[65vh] flex flex-col items-center justify-center bg-black p-4">
       <Toaster position="top-center" />
       <h1 className="text-4xl font-bold text-emerald-400 mb-8">Scan QR Code</h1>
       {scanningComplete ? (
@@ -92,12 +93,8 @@ const ScanQR = () => {
           className="w-full max-w-md mx-auto border-4 border-dashed border-gray-300 rounded-lg p-4 bg-white shadow-lg"
         ></div>
       )}
-      {scanResult && (
-        <p className="mt-4 text- font-semibold">{scanResult}</p>
-      )}
-      {error && (
-        <p className="mt-4 text-red-600 font-semibold">{error}</p>
-      )}
+      {scanResult && <p className="mt-4 font-semibold">{scanResult}</p>}
+      {error && <p className="mt-4 text-red-600 font-semibold">{error}</p>}
     </div>
   );
 };
