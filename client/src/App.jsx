@@ -20,7 +20,7 @@ function App() {
             Start your fitness journey today!<br /> <br />
           </h2>
           <NavLink
-            to="/join"
+            to="/membership"
             className="bg-orange-500 text-white  px-6 py-3 rounded-lg font-semibold text-lg transition duration-300 hover:bg-orange-600 active:bg-orange-700"
           >
             Join Now

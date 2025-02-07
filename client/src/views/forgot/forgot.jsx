@@ -31,7 +31,7 @@ function ForgotPassword() {
     toastId = toast.loading('Sending reset link...', { duration: 2000 });
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/forgot-password`, { email });
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/forgot-password`, { email });
 
       if (response.data.success) {
         toast.dismiss(toastId);

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import image from "../assets/image.webp";
 
 const GenerateQR = () => {
   const [generatedQR, setGeneratedQR] = useState(null);
@@ -15,7 +14,7 @@ const GenerateQR = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/qr/generate`,
+        `${import.meta.env.VITE_BASE_URL}/qr/generate`,
         { userId: localUser._id }
       );
 
@@ -32,32 +31,27 @@ const GenerateQR = () => {
   };
 
   return (
-    <div className="min-h-[70vh]  overflow-hidden bg-black flex flex-col items-center justify-center p-4">
+    <div className="min-h-[70vh] overflow-hidden bg-black flex flex-col items-center justify-center p-4">
       <Toaster position="top-center" />
-      
+
       {!generatedQR && (
         <button
           onClick={generateQRCode}
-          className="bg-orange-500 text-white  px-12 py-5 rounded-lg font-semibold text-lg transition duration-300 hover:bg-orange-600 active:bg-orange-700"
+          className="bg-orange-500 text-white px-12 py-5 rounded-lg font-semibold text-lg transition duration-300 hover:bg-orange-600 active:bg-orange-700"
         >
           Generate QR
         </button>
       )}
 
-      {generatedQR && (
-        <div className="relative w-[500px] h-[800px]">
-          <img
-            src={image}
-            alt="Boxer holding Mona Lisa frame"
-            className="w-full h-full object-cover"
-          />
+      {generatedQR ? (
+        <div className="relative w-[500px] h-[800px] flex items-center justify-center">
           <img
             src={generatedQR.qrCode}
             alt="Generated QR Code"
-            className="absolute top-[0%] left-[26%] w-[50%] h-[50%] object-contain "
+            className="w-[50%] h-[50%] object-contain"
           />
         </div>
-      )}
+      ):<h1>asddad</h1> }
     </div>
   );
 };

@@ -10,11 +10,20 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ,
-    credentials: true,
+    origin: "http://localhost:5173", // Must match frontend
+    credentials: true, // Allow cookies
   })
 );
-
+app.use(session({
+  secret: "your_secret_key",   // Change this to a strong secret
+  resave: false, 
+  saveUninitialized: true,
+  cookie: {
+    secure: false,  // Set to true if using HTTPS
+    httpOnly: true, // Prevents JavaScript access to the cookie
+    sameSite: "Lax" // Change to "None" if using cross-origin requests with HTTPS
+  }
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

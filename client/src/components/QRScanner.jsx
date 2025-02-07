@@ -28,7 +28,7 @@ const ScanQR = () => {
   const scanQRCode = async (qrId, userId) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/qr/scan`,
+        `${import.meta.env.VITE_BASE_URL}/qr/scan`,
         { qrId, userId }
       );
       setScanResult(response.data.message);

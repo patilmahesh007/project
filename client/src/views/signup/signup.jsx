@@ -46,13 +46,13 @@ function Signup() {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/register`, formData);
 
       if (response.data.success) {
         toast.dismiss(toastId);
         toast.success('Signup successful! 🎉 Redirecting...', { duration: 2000 });
 
-        setFormData({ user: '', email: '', password: '' });
+        setFormData({ user: '', email: '', password: '', role: '' });
 
         setTimeout(() => navigate('/login'), 1500);
       } else {

@@ -16,8 +16,12 @@ const postSignup = async (req, res) => {
     
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    const newUser = new User({ user, password: hashedPassword, email, role: role || "user" });
-    await newUser.save();
+    const newUser = new User({
+        user,
+        password: hashedPassword,
+        email,
+        role: role ? role.toUpperCase() : "USER",
+      });    await newUser.save();
     
     res.json({ success: true, message: "User registered successfully" });
   } catch (err) {
@@ -26,6 +30,8 @@ const postSignup = async (req, res) => {
 };
 
 const postLogin = async (req, res) => {
+    console.log("Incoming request headers:", req.headers); // Debug request headers
+    console.log("Incoming request body:", req.body); // Debug request body
   const { email, password } = req.body;
   if (!email || !password) {
     return res.json({ message: "All fields are required" });
@@ -50,13 +56,14 @@ const postLogin = async (req, res) => {
       role: user.role,
     };
     
+    
     const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
     
-    (req.session).token = jwtToken;
+    req.session.token = jwtToken;
+ 
     
-    user = { _id: user._id, name: user.user, email: user.email, role: user.role };
     
-    res.json({ success: true, message: "Login successful", token: jwtToken, user });
+    res.json({ success: true, message: "Login successful", userResponse });
   } catch (err) {
     res.json({ message: err.message });
   }

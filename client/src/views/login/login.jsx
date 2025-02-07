@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import Input from '../../components/Input.jsx';
 import { Toaster, toast } from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
+import api from '../../utils/api';
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -40,18 +40,18 @@ function Login() {
     if (!validateForm()) return;
 
     toast.dismiss();
-    
+
     if (!toastId) {
       toastId = toast.loading('Logging in...', { duration: 2000 });
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, formData);
-
+      const response = await api.post('/auth/login', formData);
+      console.log(response,"response");
       if (response.data.success) {
-        const { token, user } = response.data;
+        const { token, userResponse } = response.data;
         localStorage.setItem('authToken', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('user', JSON.stringify(userResponse));
         console.log(token, user);
 
         toast.dismiss(toastId);
@@ -70,7 +70,7 @@ function Login() {
         duration: 2000,
       });
     } finally {
-      toastId = null; 
+      toastId = null;
     }
   };
 

@@ -39,7 +39,7 @@ const Navbar = ({ bg }) => {
                 </div>
 
                 <NavLink
-                    to="/join"
+                    to="/membership"
                     className="bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold text-lg transition duration-200 hover:bg-orange-600 active:bg-orange-700"
                 >
                     Join Now
