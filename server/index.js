@@ -2,14 +2,34 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import session from "express-session";
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL ,
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET , 
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV, 
+      maxAge: 24 * 60 * 60 * 1000, 
+      httpOnly: true,
+    },
+  })
+);
 
 import userRoutes from "./routes/user.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
@@ -20,21 +40,20 @@ app.get("/health", (req, res) => {
   res.json({ success: true, message: "Server is healthy" });
 });
 
-app.use("/auth", userRoutes);        
-app.use("/membership", membershipRoutes); 
-app.use("/password", passwordRoutes);  
+app.use("/auth", userRoutes);
+app.use("/membership", membershipRoutes);
+app.use("/password", passwordRoutes);
 app.use("/qr", qrRoutes);
 
 const connectDB = async () => {
-    try {
-      await mongoose.connect(process.env.MONGO_URI); 
-      console.log("✅ Database Connected Successfully");
-    } catch (error) {
-      console.error("❌ Database Connection Failed:", error);
-      process.exit(1); 
-    }
-  };
-  
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ Database Connected Successfully");
+  } catch (error) {
+    console.error("❌ Database Connection Failed:", error);
+    process.exit(1);
+  }
+};
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -1,5 +1,4 @@
-import { Schema, model } from "mongoose";
-
+import { Schema, model } from "mongoose"; 
 const userSchema = new Schema(
   {
     user: {
@@ -15,6 +14,12 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    role: {
+      type: String,
+      required: true,
+      enum: ["USER", "ADMIN", "SUPER_ADMIN"], 
+      default: "USER",
+    },
     resetPasswordToken: {
       type: String, 
     },
@@ -28,6 +33,5 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
 
 export default model("user", userSchema);
