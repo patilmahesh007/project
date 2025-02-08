@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import axios from 'axios';
 import logo from '../assets/logo.png';
 import api from '../utils/api';
 
 const Navbar = ({ bg }) => {
   const loggedIn = localStorage.getItem("loggedIn") === "true";
   const [membershipActive, setMembershipActive] = useState(false);
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
     if (loggedIn) {
       const fetchMembershipStatus = async () => {
         try {
           const response = await api.get("membership/getmembership", { withCredentials: true });
-          console.log(response.data, "membership response");
-
           if (
             response.data.success &&
             Array.isArray(response.data.data) &&
@@ -30,16 +28,34 @@ const Navbar = ({ bg }) => {
           setMembershipActive(false);
         }
       };
-
       fetchMembershipStatus();
     }
   }, [loggedIn]);
 
-  const navItems = [
+  useEffect(() => {
+    if (loggedIn) {
+      const fetchUserRole = async () => {
+        try {
+          const response = await api.get("auth/role", { withCredentials: true });
+          setUserRole(response.data.role);
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+        }
+      };
+      fetchUserRole();
+    }
+  }, [loggedIn]);
+
+  const baseNavItems = [
     { name: 'Scan', path: '/scan' },
     { name: 'Generate', path: '/generate' },
     { name: 'Contact', path: '/contact' },
   ];
+
+  const navItems =
+    loggedIn && userRole === "USER"
+      ? baseNavItems.filter(item => item.name !== "Scan")
+      : baseNavItems;
 
   return (
     <nav className={`fixed w-full top-0 left-0 backdrop-blur-md bg-${bg} h-18 flex items-center px-6 shadow-md z-50`}>

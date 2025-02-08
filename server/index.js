@@ -44,6 +44,7 @@ import userRoutes from "./routes/user.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
 import passwordRoutes from "./routes/password.routes.js";
 import qrRoutes from "./routes/qr.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
 
 app.get("/health", (req, res) => {
   res.json({ success: true, message: "Server is healthy" });
@@ -53,6 +54,7 @@ app.use("/auth", userRoutes);
 app.use("/membership", membershipRoutes);
 app.use("/password", passwordRoutes);
 app.use("/qr", qrRoutes);
+app.use("/upload", uploadRoutes);
 
 const connectDB = async () => {
   try {

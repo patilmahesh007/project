@@ -47,7 +47,7 @@ function Footer() {
       </div>
 
       <div className="text-center mt-6 border-t border-gray-700 pt-4">
-        <p className="text-sm">&copy; {new Date().getFullYear()} Gym Name. All Rights Reserved.</p>
+        <p className="text-sm">&copy; 2025 Mahesh Patil. All Rights Reserved.</p>
       </div>
     </footer>
   );

@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose"; 
+
 const userSchema = new Schema(
   {
     user: {
@@ -17,18 +18,25 @@ const userSchema = new Schema(
     role: {
       type: String,
       required: true,
-      enum: ["USER", "ADMIN", "SUPER_ADMIN"], 
+      enum: ["USER", "ADMIN", "SUPER_ADMIN"],
       default: "USER",
     },
     resetPasswordToken: {
-      type: String, 
+      type: String,
     },
     resetPasswordExpire: {
-      type: Date, 
+      type: Date,
     },
     dailyQr: {
-      qrCode: { type: String }, 
-      expiryDate: { type: Date }, 
+      qrCode: { type: String },
+      expiryDate: { type: Date },
+    },
+    profilePhoto: {
+      type: String,
+      default: null,
+    },
+    membershipExpiry: {
+      type: Date,
     },
   },
   { timestamps: true }

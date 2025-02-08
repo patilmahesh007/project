@@ -92,7 +92,6 @@ export const createOrder = async (req, res) => {
 
 
 export const getMembership = async (req, res) => {
-  console.log("getMembership called");
   try {
     const userId = getUserIdFromSession(req);
     if (!userId) {

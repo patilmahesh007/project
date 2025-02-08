@@ -14,11 +14,8 @@ const GenerateQR = () => {
     }
 
     try {
-      // Since your backend extracts the user ID from the session,
-      // you don't need to send it here.
       const response = await api.post("/qr/generate", {});
 
-      // The response structure is: { success, message, data: { qrId, qrCode } }
       if (
         response.data.success &&
         response.data.data &&

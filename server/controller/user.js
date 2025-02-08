@@ -1,7 +1,8 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
+import responder from "../utils/responder.js";
+import getUserIdFromSession from "../utils/getUserID.js";
 const postSignup = async (req, res) => {
   const { user, password, email, role } = req.body; 
   if (!user || !password || !email) {
@@ -64,8 +65,44 @@ const postLogin = async (req, res) => {
     
     res.json({ success: true, message: "Login successful", userResponse });
   } catch (err) {
-    res.json({ message: err.message });
+    res.json({ message: err.message }); 
+  }
+
+};
+
+
+const getUserRole = async (req, res) => {
+  const userId = getUserIdFromSession(req);
+  if (!userId) {
+    return responder(res, null, "Unauthorized: No session token", false, 401);
+  }
+  try {
+    const user = await User.findById(userId).select("role");
+    if (!user) {
+      return responder(res, null, "User not found", false, 404);
+    }
+    return responder(res, { role: user.role, id: user._id }, "User role retrieved successfully", true, 200);
+  } catch (error) {
+    return responder(res, null, error.message, false, 500);
   }
 };
 
-export { postSignup, postLogin };
+ const getUserProfile = async (req, res) => {
+  try {
+    const userId = getUserIdFromSession(req);
+    if (!userId) {
+      return responder(res, null, "Unauthorized: No session token", false, 401);
+    }
+
+    const user = await User.findById(userId).select("profilePhoto membershipExpiry");
+    if (!user) {
+      return responder(res, null, "User not found", false, 404);
+    }
+    return responder(res, { user }, "User profile fetched successfully", true, 200);
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    return responder(res, null, error.message, false, 500);
+  }
+};
+
+export { postSignup, postLogin,getUserRole,getUserProfile };
