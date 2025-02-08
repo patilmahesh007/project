@@ -4,6 +4,8 @@ import Razorpay from "razorpay";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import responder from "../utils/responder.js";
+import getUserIdFromSession from "../utils/getUserID.js";
+
 dotenv.config();
 
 const razorpay = new Razorpay({
@@ -11,41 +13,26 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET || "",
 });
 
-// Helper function to extract user ID from session token
-const getUserIdFromSession = (req) => {
-  if (!req.session || !req.session.token) return null;
-  try {
-    const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
-    return decoded.userResponse._id;
-  } catch (error) {
-    return null;
-  }
-};
-
 export const buyMembership = async (req, res) => {
   try {
-    // Use session token to get the userId
     const userId = getUserIdFromSession(req);
     if (!userId) {
       return responder(res, null, "Unauthorized: No session token", false, 401);
     }
-    // Extract membership details from request body
+
     const { planName, price, duration, paymentId } = req.body;
-    
+
     let userMembership = await Membership.findOne({ userId, status: "active" });
     if (userMembership) {
-      // Extend existing membership
       const currentExpiry = userMembership.expiryDate;
       const durationInMonths = Number(duration);
       const newExpiryDate = new Date(currentExpiry);
       newExpiryDate.setMonth(newExpiryDate.getMonth() + durationInMonths);
       userMembership.expiryDate = newExpiryDate;
-      // Push new paymentId into the array instead of replacing it
       userMembership.paymentIds.push(paymentId);
       await userMembership.save();
       return responder(res, userMembership, "Membership extended successfully!", true, 200);
     } else {
-      // Create a new membership
       const expiryDate = new Date();
       expiryDate.setMonth(expiryDate.getMonth() + Number(duration));
       const newMembership = new Membership({
@@ -60,6 +47,7 @@ export const buyMembership = async (req, res) => {
       return responder(res, newMembership, "Membership activated!", true, 201);
     }
   } catch (error) {
+    console.error("Error in buyMembership:", error.message);
     return responder(res, null, "Server error", false, 500);
   }
 };
@@ -67,13 +55,25 @@ export const buyMembership = async (req, res) => {
 export const createOrder = async (req, res) => {
   try {
     const { amount, currency = "INR" } = req.body;
+    
+    // Validate amount
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+      return responder(res, null, "Invalid amount provided", false, 400);
+    }
+
+    // Prepare options (amount converted to paise)
     const options = {
-      amount: amount * 100, // Razorpay expects the amount in paise
+      amount: Number(amount) * 100,
       currency,
       receipt: `receipt_${Date.now()}`,
       payment_capture: 1,
     };
+
+    console.log("Creating Razorpay order with options:", options);
+
     const order = await razorpay.orders.create(options);
+    console.log("Order created:", order);
+
     return responder(
       res,
       { orderId: order.id, amount: order.amount },
@@ -82,13 +82,18 @@ export const createOrder = async (req, res) => {
       201
     );
   } catch (error) {
-    return responder(res, null, "Error creating order", false, 500);
+    console.error("Error in createOrder:", error);
+    if (error.response) {
+      console.error("Error response data:", error.response.data);
+    }
+    return responder(res, null, error.message || "Error creating order", false, 500);
   }
 };
 
+
 export const getMembership = async (req, res) => {
+  console.log("getMembership called");
   try {
-    // Retrieve userId from session instead of req.params
     const userId = getUserIdFromSession(req);
     if (!userId) {
       return responder(res, null, "Unauthorized: No session token", false, 401);
@@ -99,6 +104,7 @@ export const getMembership = async (req, res) => {
     }
     return responder(res, memberships, "Membership retrieved successfully", true, 200);
   } catch (error) {
+    console.error("Error in getMembership:", error.message);
     return responder(res, null, "Server error", false, 500);
   }
 };
@@ -121,6 +127,7 @@ export const cancelMembership = async (req, res) => {
     await membership.save();
     return responder(res, membership, "Membership cancelled successfully", true, 200);
   } catch (error) {
+    console.error("Error in cancelMembership:", error.message);
     return responder(res, null, "Server error", false, 500);
   }
 };
@@ -149,6 +156,7 @@ export const checkMembership = async (req, res) => {
     };
     return responder(res, responseData, "Membership status retrieved successfully", true, 200);
   } catch (error) {
+    console.error("Error in checkMembership:", error.message);
     return responder(res, null, "Server error", false, 500);
   }
 };

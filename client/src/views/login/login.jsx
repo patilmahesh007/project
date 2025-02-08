@@ -52,7 +52,6 @@ function Login() {
         const { token, userResponse } = response.data;
         localStorage.setItem('authToken', token);
         localStorage.setItem('user', JSON.stringify(userResponse));
-        // Corrected: log userResponse instead of undefined 'user'
         console.log(token, userResponse);
 
         toast.dismiss(toastId);
@@ -60,7 +59,8 @@ function Login() {
 
         setFormData({ email: '', password: '' });
 
-        setTimeout(() => navigate('/dashboard'), 1500);
+        setTimeout(() => navigate('/'), 1500);
+        localStorage.setItem('loggedIn', 'true');
       } else {
         toast.dismiss(toastId);
         toast.error(response.data.message || 'Login failed.', { duration: 2000 });
