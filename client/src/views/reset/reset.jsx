@@ -8,9 +8,14 @@ function ResetPassword() {
   const { token } = useParams();
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  let toastId = null;
+
+  // Check if the reset token is available
+  if (!token) {
+    toast.error("Reset token is missing. Please check your reset link.");
+  }
 
   const validateForm = () => {
+    // Dismiss any previous toasts
     toast.dismiss();
 
     if (!password) {
@@ -29,12 +34,20 @@ function ResetPassword() {
 
     if (!validateForm()) return;
 
-    toastId = toast.loading('Resetting password...', { duration: 2000 });
+    const toastId = toast.loading('Resetting password...', { duration: 2000 });
 
     try {
+      const baseUrl = import.meta.env.VITE_BASE_URL;
+      if (!baseUrl) {
+        toast.dismiss(toastId);
+        toast.error("API base URL is not configured. Please check your environment variables.");
+        return;
+      }
+
       const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/auth/reset-password/${token}`,
-        { newPassword: password }
+        `${baseUrl}/password/reset/${token}`,
+        { newPassword: password },
+        { withCredentials: true }
       );
 
       if (response.data.success) {
@@ -47,9 +60,11 @@ function ResetPassword() {
       }
     } catch (error) {
       toast.dismiss(toastId);
-      toast.error(error.response?.data?.message || 'An error occurred. Please try again.', {
-        duration: 2000,
-      });
+      console.error("Reset password error:", error);
+      toast.error(
+        error.response?.data?.message || 'An error occurred. Please try again.',
+        { duration: 2000 }
+      );
     }
   };
 
@@ -58,7 +73,9 @@ function ResetPassword() {
       <Toaster position="top-center" reverseOrder={false} />
 
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-8 w-[400px]">
-        <h1 className="text-4xl font-bold text-center text-gray-700 mb-6">Reset Password</h1>
+        <h1 className="text-4xl font-bold text-center text-gray-700 mb-6">
+          Reset Password
+        </h1>
         
         <Input
           label="New Password"

@@ -22,16 +22,28 @@ export const buyMembership = async (req, res) => {
 
     const { planName, price, duration, paymentId } = req.body;
 
-    let userMembership = await Membership.findOne({ userId, status: "active" });
-    if (userMembership) {
-      const currentExpiry = userMembership.expiryDate;
+    let membership = await Membership.findOne({ userId, status: "active" });
+    if (membership) {
       const durationInMonths = Number(duration);
+      const currentExpiry = membership.expiryDate;
       const newExpiryDate = new Date(currentExpiry);
       newExpiryDate.setMonth(newExpiryDate.getMonth() + durationInMonths);
-      userMembership.expiryDate = newExpiryDate;
-      userMembership.paymentIds.push(paymentId);
-      await userMembership.save();
-      return responder(res, userMembership, "Membership extended successfully!", true, 200);
+      membership.expiryDate = newExpiryDate;
+      membership.paymentIds.push(paymentId);
+      await membership.save();
+
+      return responder(
+        res,
+        {
+          membership: {
+            isActive: membership.isActive !== undefined ? membership.isActive : true,
+            expiryDate: membership.expiryDate,
+          },
+        },
+        "Membership extended successfully!",
+        true,
+        200
+      );
     } else {
       const expiryDate = new Date();
       expiryDate.setMonth(expiryDate.getMonth() + Number(duration));
@@ -44,24 +56,32 @@ export const buyMembership = async (req, res) => {
         status: "active",
       });
       await newMembership.save();
-      return responder(res, newMembership, "Membership activated!", true, 201);
+      return responder(
+        res,
+        {
+          membership: {
+            isActive: newMembership.status === "active",
+            expiryDate: newMembership.expiryDate,
+          },
+        },
+        "Membership activated!",
+        true,
+        201
+      );
     }
   } catch (error) {
     console.error("Error in buyMembership:", error.message);
     return responder(res, null, "Server error", false, 500);
   }
 };
-
 export const createOrder = async (req, res) => {
   try {
     const { amount, currency = "INR" } = req.body;
     
-    // Validate amount
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       return responder(res, null, "Invalid amount provided", false, 400);
     }
 
-    // Prepare options (amount converted to paise)
     const options = {
       amount: Number(amount) * 100,
       currency,

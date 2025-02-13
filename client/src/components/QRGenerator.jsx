@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import image from "../assets/image.webp";
 import api from "../utils/api";
 
 const GenerateQR = () => {
@@ -15,7 +14,6 @@ const GenerateQR = () => {
 
     try {
       const response = await api.post("/qr/generate", {});
-
       if (
         response.data.success &&
         response.data.data &&
@@ -34,7 +32,9 @@ const GenerateQR = () => {
   };
 
   return (
-    <div className="min-h-[70vh] overflow-hidden bg-black flex flex-col items-center justify-center p-4">
+    <div className="w-full h-[70vh] pt-20 overflow-hidden bg-black flex flex-col items-center justify-center p-4">
+      <div className="h-10 bg-black"></div>
+
       <Toaster position="top-center" />
 
       {!generatedQR ? (
@@ -47,14 +47,9 @@ const GenerateQR = () => {
       ) : (
         <div className="relative w-[500px] h-[800px] flex items-center justify-center">
           <img
-            src={image}
-            alt="Boxer holding Mona Lisa frame"
-            className="w-full h-full object-cover"
-          />
-          <img
             src={generatedQR.qrCode}
             alt="Generated QR Code"
-            className="absolute top-[0%] left-[26%] w-[50%] h-[50%] object-contain"
+            className="absolute top-[0%] left-[26%] w-[50%] h-[50%] h-[400px] object-contain"
           />
         </div>
       )}

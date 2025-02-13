@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import responder from "../utils/responder.js";
 import getUserIdFromSession from "../utils/getUserID.js";
+import Membership from "./../model/membership.model.js";
+
 const postSignup = async (req, res) => {
   const { user, password, email, role } = req.body; 
   if (!user || !password || !email) {
@@ -30,44 +32,45 @@ const postSignup = async (req, res) => {
   }
 };
 
-const postLogin = async (req, res) => {
-
+ const postLogin = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.json({ message: "All fields are required" });
   }
-  
+
   try {
-    let user = await User.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.json({ message: "User not found" });
     }
-    
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.json({ message: "Invalid credentials" });
     }
-    
+
+    const membership = await Membership.findOne({ userId: user._id });
+
     const userResponse = { 
       _id: user._id,
       name: user.user, 
       email: user.email,
       mobile: user.mobile,
       role: user.role,
+      membership: {
+        isActive: membership ? membership.isActive : false,
+        expiryDate: membership ? membership.expiryDate : null,
+      }
     };
-    
-    
+
     const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
-    
     req.session.token = jwtToken;
- 
-    
-    
+
     res.json({ success: true, message: "Login successful", userResponse });
   } catch (err) {
-    res.json({ message: err.message }); 
+    console.error("Login error:", err);
+    res.json({ message: err.message });
   }
-
 };
 
 

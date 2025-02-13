@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
+import { Card, CardContent, CardHeader, CardTitle } from './../../components/profileComponents.jsx';
+import { Loader2 } from "lucide-react";
+import { toast } from 'react-hot-toast';
 import api from '../../utils/api';
-import { Toaster, toast } from 'react-hot-toast';
+import Footer from '../../components/Footer.jsx';
+import Navbar from '../../components/Navbar.jsx';
 
-function Profile() {
+const ProfilePage = () => {
   const navigate = useNavigate();
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [membershipExpiry, setMembershipExpiry] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
-  const [changePassword, setChangePassword] = useState({
-    current: '',
-    new: '',
-    confirm: '',
-  });
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -23,7 +19,6 @@ function Profile() {
         const res = await api.get('auth/profile', { withCredentials: true });
         if (res.data.success) {
           setProfilePhoto(res.data.data.user.profilePhoto);
-          setMembershipExpiry(res.data.data.user.membershipExpiry);
         }
       } catch (err) {
         console.error('Error fetching profile data:', err);
@@ -31,8 +26,11 @@ function Profile() {
       }
     };
     fetchProfileData();
+    const localExpiry = localStorage.getItem("membershipExpiry");
+    if (localExpiry) {
+      setMembershipExpiry(localExpiry);
+    }
   }, []);
-  
 
   const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
@@ -45,159 +43,91 @@ function Profile() {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
-      const imageUrl = response.data.data.profilePhoto;
-      setProfilePhoto(imageUrl);
+      setProfilePhoto(response.data.data.profilePhoto);
       toast.success('Profile photo updated successfully.');
     } catch (err) {
-      console.error("Error uploading profile photo:", err.response ? err.response.data : err.message);
+      console.error("Error uploading profile photo:", err);
       toast.error('Failed to update profile photo.');
     }
     setUploading(false);
   };
 
-  const handleChangePasswordSubmit = async (e) => {
-    e.preventDefault();
-    if (changePassword.new !== changePassword.confirm) {
-      toast.error('New passwords do not match.');
-      return;
-    }
-    try {
-      const res = await api.put(
-        'user/changePassword',
-        {
-          currentPassword: changePassword.current,
-          newPassword: changePassword.new,
-        },
-        { withCredentials: true }
-      );
-      if (res.data.success) {
-        toast.success('Password changed successfully.');
-        setShowChangePasswordForm(false);
-        setChangePassword({ current: '', new: '', confirm: '' });
-      } else {
-        toast.error(res.data.message || 'Failed to change password.');
-      }
-    } catch (err) {
-      console.error('Error changing password:', err);
-      toast.error('Error changing password.');
-    }
-  };
-
   return (
-    <div>
-      <Navbar bg="orange-100" />
-      <div className="min-h-screen bg-gray-100 py-8">
-        <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-          <h1 className="text-2xl font-bold mb-6">My Profile</h1>
-          <div className="flex flex-col md:flex-row items-center mb-8">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
-              {profilePhoto ? (
-                <img
-                  src={profilePhoto}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                  <span className="text-gray-500">No Photo</span>
+    <div className="min-h-screen bg-gray-900 text-gray-100">
+      <Navbar bg="gray-900" />
+      <div className='bg-gray-900 h-10'></div>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-gray-100">My Profile</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-8">
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="relative group">
+                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-600 bg-gray-700">
+                    {profilePhoto ? (
+                      <img
+                        src={profilePhoto}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-gray-400">No Photo</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-300">
+                      Update Profile Photo
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="mt-2 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-gray-200 hover:file:bg-gray-600"
+                    />
+                    {uploading && (
+                      <div className="flex items-center gap-2 mt-2 text-blue-400">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm">Uploading...</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
-            <div className="mt-4 md:mt-0 md:ml-8">
-              <label className="block text-sm font-medium text-gray-700">
-                Upload Profile Photo
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                className="mt-2 block"
-              />
-              {uploading && (
-                <p className="text-sm text-blue-500 mt-1">Uploading...</p>
-              )}
-            </div>
-          </div>
-          <div className="mb-8">
-            <p className="text-lg">
-              <span className="font-semibold">Membership Expiry Date: </span>
-              {membershipExpiry
-                ? new Date(membershipExpiry).toLocaleDateString()
-                : 'Not Available'}
-            </p>
-            <button
-              onClick={() => navigate('/membership')}
-              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
-            >
-              Renew Membership
-            </button>
-          </div>
-          <div className="mb-8">
-            <button
-              onClick={() => setShowChangePasswordForm(!showChangePasswordForm)}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200"
-            >
-              {showChangePasswordForm ? 'Cancel' : 'Change Password'}
-            </button>
-            {showChangePasswordForm && (
-              <form onSubmit={handleChangePasswordSubmit} className="mt-4 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Current Password
-                  </label>
-                  <input
-                    type="password"
-                    value={changePassword.current}
-                    onChange={(e) =>
-                      setChangePassword({ ...changePassword, current: e.target.value })
-                    }
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={changePassword.new}
-                    onChange={(e) =>
-                      setChangePassword({ ...changePassword, new: e.target.value })
-                    }
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={changePassword.confirm}
-                    onChange={(e) =>
-                      setChangePassword({ ...changePassword, confirm: e.target.value })
-                    }
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
+              </div>
+              <div className="p-6 bg-gray-700 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-100 mb-4">Membership Details</h3>
+                <p className="text-gray-300 mb-4">
+                  <span className="font-medium">Expiry Date: </span>
+                  {membershipExpiry ? new Date(membershipExpiry).toLocaleDateString() : 'Not Available'}
+                </p>
                 <button
-                  type="submit"
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200"
+                  onClick={() => navigate('/membership')}
+                  className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-md"
                 >
-                  Update Password
+                  Renew Membership
                 </button>
-              </form>
-            )}
-          </div>
-        </div>
+              </div>
+              <div className="p-6 bg-gray-700 rounded-lg">
+                <div className="mb-4">
+                  <h3 className="text-xl font-semibold text-gray-100">Password Settings</h3>
+                  <button
+                    onClick={() => navigate('/forgotpassword')}
+                    className="px-4 mt-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-md transition-colors"
+                  >
+                    Change Password
+                  </button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
       <Footer />
-      <Toaster position="top-right" />
     </div>
   );
-}
+};
 
-export default Profile;
+export default ProfilePage;

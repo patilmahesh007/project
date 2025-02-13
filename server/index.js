@@ -10,18 +10,18 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Must match frontend
-    credentials: true, // Allow cookies
+    origin: "http://localhost:5173", 
+    credentials: true, 
   })
 );
 app.use(session({
-  secret: "your_secret_key",   // Change this to a strong secret
+  secret: "your_secret_key",   
   resave: false, 
   saveUninitialized: true,
   cookie: {
-    secure: false,  // Set to true if using HTTPS
-    httpOnly: true, // Prevents JavaScript access to the cookie
-    sameSite: "Lax" // Change to "None" if using cross-origin requests with HTTPS
+    secure: false,  
+    httpOnly: true, 
+    sameSite: "Lax" 
   }
 }));
 app.use(express.json());

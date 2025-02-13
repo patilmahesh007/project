@@ -49,7 +49,6 @@ const Navbar = ({ bg }) => {
   const baseNavItems = [
     { name: 'Scan', path: '/scan' },
     { name: 'Generate', path: '/generate' },
-    { name: 'Contact', path: '/contact' },
   ];
 
   const navItems =

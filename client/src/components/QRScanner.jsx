@@ -7,12 +7,12 @@ const ScanQR = () => {
   const [scanningComplete, setScanningComplete] = useState(false);
   const [error, setError] = useState("");
   const [scanResult, setScanResult] = useState("");
-  
+
   const isScanning = useRef(false);
   const scannerRef = useRef(null);
 
   const processScanResult = async (decodedText) => {
-    if (isScanning.current) return; 
+    if (isScanning.current) return;
     isScanning.current = true;
     try {
       const parsedData = JSON.parse(decodedText);
@@ -54,7 +54,6 @@ const ScanQR = () => {
       const scanner = new Html5QrcodeScanner("reader", config, false);
       scanner.render(
         (decodedText) => {
-          console.log("QR Code Scanned:", decodedText);
           if (!scanningComplete) {
             processScanResult(decodedText);
           }
@@ -71,6 +70,12 @@ const ScanQR = () => {
       };
     }
   }, [scanningComplete]);
+  const handleRestartScan = () => {
+    setScanningComplete(false);
+    setScanResult("");
+    setError("");
+    isScanning.current = false;
+  };
 
   return (
     <div className="min-h-[65vh] flex flex-col items-center justify-center bg-black p-4">
@@ -86,6 +91,12 @@ const ScanQR = () => {
           <p className="text-emerald-400 text-xl font-medium">
             Entry granted. No further scans.
           </p>
+          <button
+            onClick={handleRestartScan}
+            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+          >
+            Scan Again
+          </button>
         </div>
       ) : (
         <div

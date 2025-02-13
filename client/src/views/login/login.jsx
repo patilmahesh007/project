@@ -16,7 +16,6 @@ function Login() {
 
   const validateForm = () => {
     const { email, password } = formData;
-
     toast.dismiss();
 
     if (!email || !password) {
@@ -40,36 +39,39 @@ function Login() {
     if (!validateForm()) return;
 
     toast.dismiss();
-
     if (!toastId) {
       toastId = toast.loading('Logging in...', { duration: 2000 });
     }
 
     try {
       const response = await api.post('/auth/login', formData);
-      console.log(response, "response");
       if (response.data.success) {
-        const { token, userResponse } = response.data;
-        localStorage.setItem('authToken', token);
+        const { userResponse } = response.data;
+        // Save entire userResponse in local storage
         localStorage.setItem('user', JSON.stringify(userResponse));
-        console.log(token, userResponse);
+
+        // Save specific fields
+        localStorage.setItem('membershipExpiry', userResponse.membership?.expiryDate || '');
+        localStorage.setItem('userRole', userResponse.role);
+        localStorage.setItem('userName', userResponse.name);
+        localStorage.setItem('userEmail', userResponse.email);
+        localStorage.setItem('membershipActive', String(userResponse.membership?.isActive));
 
         toast.dismiss(toastId);
         toast.success('Login successful! 🎉', { duration: 2000 });
-
         setFormData({ email: '', password: '' });
-
-        setTimeout(() => navigate('/'), 1500);
         localStorage.setItem('loggedIn', 'true');
+        setTimeout(() => navigate('/'), 1500);
       } else {
         toast.dismiss(toastId);
         toast.error(response.data.message || 'Login failed.', { duration: 2000 });
       }
     } catch (error) {
       toast.dismiss(toastId);
-      toast.error(error.response?.data?.message || 'An error occurred. Please try again.', {
-        duration: 2000,
-      });
+      toast.error(
+        error.response?.data?.message || 'An error occurred. Please try again.',
+        { duration: 2000 }
+      );
     } finally {
       toastId = null;
     }
