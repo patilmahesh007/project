@@ -10,7 +10,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://project-occz-judbx792i-patilmahesh007s-projects.vercel.app/", 
+    origin: "https://project-occz-judbx792i-patilmahesh007s-projects.vercel.app", 
     credentials: true, 
   })
 );
