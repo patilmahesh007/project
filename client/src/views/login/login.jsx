@@ -62,6 +62,10 @@ function Login() {
         setFormData({ email: '', password: '' });
         localStorage.setItem('loggedIn', 'true');
         setTimeout(() => navigate('/'), 1500);
+        document.cookie = `user-info=${encodeURIComponent(
+          JSON.stringify(response.data.data)
+        )}; path=/;`;
+  
       } else {
         toast.dismiss(toastId);
         toast.error(response.data.message || 'Login failed.', { duration: 2000 });
