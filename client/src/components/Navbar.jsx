@@ -1,48 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import api from '../utils/api';
 
 const Navbar = ({ bg }) => {
   const loggedIn = localStorage.getItem("loggedIn") === "true";
-  const [membershipActive, setMembershipActive] = useState(false);
+  const [membershipActive, setMembershipActive] = useState(undefined);
   const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
     if (loggedIn) {
-      const fetchMembershipStatus = async () => {
-        try {
-          const response = await api.get("membership/getmembership", { withCredentials: true });
-          if (
-            response.data.success &&
-            Array.isArray(response.data.data) &&
-            response.data.data.length > 0
-          ) {
-            const membership = response.data.data[0];
-            setMembershipActive(membership.status === "active");
-          } else {
-            setMembershipActive(false);
-          }
-        } catch (error) {
-          console.error("Error fetching membership status:", error);
-          setMembershipActive(false);
-        }
-      };
-      fetchMembershipStatus();
-    }
-  }, [loggedIn]);
-
-  useEffect(() => {
-    if (loggedIn) {
-      const fetchUserRole = async () => {
-        try {
-          const response = await api.get("auth/role", { withCredentials: true });
-          setUserRole(response.data.role);
-        } catch (error) {
-          console.error("Error fetching user role:", error);
-        }
-      };
-      fetchUserRole();
+      const storedMembershipActive = localStorage.getItem("membershipActive");
+      const storedUserRole = localStorage.getItem("userRole");
+      setMembershipActive(storedMembershipActive); // "true", "false", or undefined
+      setUserRole(storedUserRole || "");
     }
   }, [loggedIn]);
 
@@ -96,19 +66,19 @@ const Navbar = ({ bg }) => {
           >
             Login
           </NavLink>
-        ) : membershipActive ? (
-          <NavLink
-            to="/profile"
-            className="bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold text-lg transition duration-200 hover:bg-orange-600 active:bg-orange-700"
-          >
-            Profile
-          </NavLink>
-        ) : (
+        ) : membershipActive === "false" ? (
           <NavLink
             to="/membership"
             className="bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold text-lg transition duration-200 hover:bg-orange-600 active:bg-orange-700"
           >
             Join Now
+          </NavLink>
+        ) : (
+          <NavLink
+            to="/profile"
+            className="bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold text-lg transition duration-200 hover:bg-orange-600 active:bg-orange-700"
+          >
+            Profile
           </NavLink>
         )}
       </ul>
