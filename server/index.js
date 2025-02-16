@@ -10,7 +10,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://project-gamma-eight-28.vercel.app", 
+    origin: "https://project-gamma-eight-28.vercel.app/", 
     credentials: true, 
   })
 );
