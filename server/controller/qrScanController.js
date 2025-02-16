@@ -8,6 +8,7 @@ import responder from "../utils/responder.js";
 import getUserIdFromSession from "../utils/getUserID.js";
 
 export const generateQRCode = async (req, res) => {
+
   try {
     const userId = getUserIdFromSession(req);
     if (!userId) {

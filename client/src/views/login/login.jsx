@@ -61,7 +61,7 @@ function Login() {
         localStorage.setItem('loggedIn', 'true');
         setTimeout(() => navigate('/'), 1500);
         document.cookie = `user-info=${encodeURIComponent(
-          JSON.stringify(response.data.data)
+          JSON.stringify(response.data)
         )}; path=/;`;
 
       } else {
