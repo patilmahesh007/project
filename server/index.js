@@ -18,10 +18,9 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.set("trust proxy", 1);
 
 // Determine environment-specific cookie settings:
-const isProduction = process.env.NODE_ENV === "production";
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -32,14 +31,13 @@ app.use(
       ttl: 14 * 24 * 60 * 60, // 14 days in seconds
     }),
     cookie: {
-      secure: isProduction, // true in production (HTTPS), false in development (HTTP)
+      secure: process.env.NODE_ENV === "production", // true in production (HTTPS)
       httpOnly: true,
-      sameSite: isProduction ? "none" : "lax", // Use "none" for production and "lax" for development
+      sameSite: "none", // Allows cross-site cookies
       maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
     },
   })
 );
-
 import userRoutes from "./routes/user.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
 import passwordRoutes from "./routes/password.routes.js";
