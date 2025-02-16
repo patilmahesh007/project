@@ -16,28 +16,26 @@ app.use(
   })
 );
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET ,
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      ttl: 14 * 24 * 60 * 60,
+      ttl: 14 * 24 * 60 * 60, 
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // `true` if running on HTTPS
+      secure: process.env.NODE_ENV === "production", 
       httpOnly: true,
-      sameSite: "none", // Allow cross-site requests
+      sameSite: "none", 
+      maxAge: 24 * 60 * 60 * 1000, 
     },
   })
 );
-
-
 
 import userRoutes from "./routes/user.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
