@@ -8,7 +8,7 @@ const QRPage = () => {
        <Navbar
       bg="black"
       />
-      <h1 style={{ textAlign: "center" }}></h1>
+      <h1 style={{ textAlign: "center" }}></h1> 
       
       <QRGenerator />
       <Footer/>
