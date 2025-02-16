@@ -19,6 +19,9 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Determine environment-specific cookie settings:
+const isProduction = process.env.NODE_ENV === "production";
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -26,13 +29,13 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      ttl: 14 * 24 * 60 * 60, 
+      ttl: 14 * 24 * 60 * 60, // 14 days in seconds
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", 
+      secure: isProduction, // true in production (HTTPS), false in development (HTTP)
       httpOnly: true,
-      sameSite: "none", 
-      maxAge: 24 * 60 * 60 * 1000, 
+      sameSite: isProduction ? "none" : "lax", // Use "none" for production and "lax" for development
+      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
     },
   })
 );
