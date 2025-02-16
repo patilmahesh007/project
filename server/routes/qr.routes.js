@@ -3,10 +3,10 @@ import { generateQRCode , scanQRCode , getQRCode , getScanLogs , expireOldQRCode
 import verify from "../middleware/verify.js";
 const router = express.Router();
 
-router.post("/api/generate", verify,generateQRCode );
-router.post("/api/scan", verify,scanQRCode );
-router.get("/api/getqr",verify, getQRCode );
-router.get("/api/logs",verify, getScanLogs );
-router.delete("/api/cleanup", verify,expireOldQRCodes );
+router.post("/generate", verify,generateQRCode );
+router.post("/scan", verify,scanQRCode );
+router.get("/getqr",verify, getQRCode );
+router.get("/logs",verify, getScanLogs );
+router.delete("/cleanup", verify,expireOldQRCodes );
 
 export default router;
