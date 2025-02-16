@@ -47,10 +47,8 @@ function Login() {
       const response = await api.post('/auth/login', formData);
       if (response.data.success) {
         const { userResponse } = response.data;
-        // Save entire userResponse in local storage
         localStorage.setItem('user', JSON.stringify(userResponse));
 
-        // Save specific fields
         localStorage.setItem('membershipExpiry', userResponse.membership?.expiryDate || '');
         localStorage.setItem('userRole', userResponse.role);
         localStorage.setItem('userName', userResponse.name);
@@ -65,7 +63,7 @@ function Login() {
         document.cookie = `user-info=${encodeURIComponent(
           JSON.stringify(response.data.data)
         )}; path=/;`;
-  
+
       } else {
         toast.dismiss(toastId);
         toast.error(response.data.message || 'Login failed.', { duration: 2000 });

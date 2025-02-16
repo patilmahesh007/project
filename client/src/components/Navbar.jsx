@@ -11,7 +11,7 @@ const Navbar = ({ bg }) => {
     if (loggedIn) {
       const storedMembershipActive = localStorage.getItem("membershipActive");
       const storedUserRole = localStorage.getItem("userRole");
-      setMembershipActive(storedMembershipActive); // "true", "false", or undefined
+      setMembershipActive(storedMembershipActive); 
       setUserRole(storedUserRole || "");
     }
   }, [loggedIn]);
