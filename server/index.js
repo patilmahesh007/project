@@ -20,7 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set("trust proxy", 1);
 
-// Determine environment-specific cookie settings:
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -28,13 +27,13 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      ttl: 14 * 24 * 60 * 60, // 14 days in seconds
+      ttl: 14 * 24 * 60 * 60,
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // true in production (HTTPS)
+      secure: process.env.NODE_ENV === "production", 
       httpOnly: true,
-      sameSite: "none", // Allows cross-site cookies
-      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+      sameSite: "none", 
+      maxAge: 24 * 60 * 60 * 1000, 
     },
   })
 );
