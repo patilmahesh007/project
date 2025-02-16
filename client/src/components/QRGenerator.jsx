@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import api from "../utils/api";
-import axios from "axios";
 
 const GenerateQR = () => {
   const [generatedQR, setGeneratedQR] = useState(null);
@@ -14,7 +13,7 @@ const GenerateQR = () => {
     }
 
     try {
-      const response=axios.post(`${import.meta.env.VITE_BASE_URL}/qr/generate`,null,{withCredentials: true});
+      const response = await api.post("/qr/generate", {});
       if (
         response.data.success &&
         response.data.data &&
