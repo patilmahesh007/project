@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 
 dotenv.config();
 
@@ -10,32 +11,28 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://project-gamma-eight-28.vercel.app", 
-    credentials: true, 
+    origin: "http://localhost:5173",
+    credentials: true,
   })
 );
-app.use(session({
-  secret: "your_secret_key",   
-  resave: false, 
-  saveUninitialized: true,
-  cookie: {
-    secure: false,  
-    httpOnly: true, 
-    sameSite: "Lax" 
-  }
-}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET , 
+    secret: process.env.SESSION_SECRET || "default_secret",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      ttl: 14 * 24 * 60 * 60, 
+    }),
     cookie: {
-      secure: process.env.NODE_ENV, 
-      maxAge: 24 * 60 * 60 * 1000, 
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
     },
   })
 );
@@ -68,7 +65,9 @@ const connectDB = async () => {
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: "Internal Server Error", details: err.message });
+  res
+    .status(500)
+    .json({ error: "Internal Server Error", details: err.message });
 });
 
 const PORT = process.env.PORT || 5000;
