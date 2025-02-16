@@ -1,6 +1,6 @@
 import { Facebook, Instagram, Twitter, Youtube, MapPin } from "lucide-react";
 import gymLogo from "../assets/logo.png";
-
+import React from "react";
 function Footer() {
   return (
     <footer className="bg-black text-gray-300 py-8 px-10 md:px-20">

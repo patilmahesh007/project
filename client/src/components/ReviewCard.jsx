@@ -14,7 +14,7 @@ const ReviewCard = ({ review, name, designation, image }) => {
           <p className="text-gray-400 text-sm">{designation}</p>
         </div>
       </div>
-      <p className="text-gray-300 text-sm whitespace-normal break-words">
+      <p className="text-gray-300 text-sm whitespace-normal break-words"> 
         {review}
       </p>
     </div>

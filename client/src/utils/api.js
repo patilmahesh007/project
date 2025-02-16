@@ -1,7 +1,8 @@
 import axios from "axios";
-const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
-    withCredentials: true
-  });
 
-  export default api
+const api = axios.create({
+  baseURL: '/api',  // Now same-origin as your frontend
+  withCredentials: true,
+});
+
+export default api;

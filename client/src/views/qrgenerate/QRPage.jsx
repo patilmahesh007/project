@@ -1,6 +1,7 @@
 import QRGenerator from "../../components/QRGenerator";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import React from "react";
 const QRPage = () => {
   return (
     <div>
