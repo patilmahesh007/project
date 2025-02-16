@@ -3,10 +3,10 @@ import { buyMembership,getMembership,cancelMembership,checkMembership,createOrde
 import verify from "../middleware/verify.js";
 const router = express.Router();
 
-router.post("/buy",verify, buyMembership);
-router.get("/getmembership", getMembership);
-router.post("/cancel",verify, cancelMembership);
-router.get("/valid", verify,checkMembership);
-router.post("/order", verify,createOrder);
+router.post("/api/buy",verify, buyMembership);
+router.get("/api/getmembership", getMembership);
+router.post("/api/cancel",verify, cancelMembership);
+router.get("/api/valid", verify,checkMembership);
+router.post("/api/order", verify,createOrder);
 
 export default router;

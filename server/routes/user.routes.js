@@ -3,9 +3,9 @@ import { postSignup, postLogin ,getUserRole,getUserProfile} from "../controller/
 
 const router = express.Router();
 
-router.post("/register", postSignup);
-router.post("/login", postLogin);
-router.get("/role", getUserRole);
-router.get("/profile", getUserProfile);
+router.post("/api/register", postSignup);
+router.post("/api/login", postLogin);
+router.get("/api/role", getUserRole);
+router.get("/api/profile", getUserProfile);
 
 export default router;

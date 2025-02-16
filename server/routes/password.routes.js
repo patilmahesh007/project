@@ -3,8 +3,8 @@ import { forgotPassword, resetPassword } from "../controller/forgot.js";
 
 const router = express.Router();
 
-router.post("/forgot", forgotPassword);
-router.post("/reset/:token", resetPassword);
+router.post("/api/forgot", forgotPassword);
+router.post("/api/reset/:token", resetPassword);
 
 
 export default router;
