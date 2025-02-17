@@ -3,40 +3,20 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import session from "express-session";
-import MongoStore from "connect-mongo";
-
 dotenv.config();
 
 const app = express();
 
 app.use(
   cors({
-    origin: "https://project-gamma-eight-28.vercel.app",
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.set("trust proxy", 1);
+app.use(session({secret:"secret",cookie:{maxAge:60000,httpOnly:false,secure:false}}));
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
-      ttl: 14 * 24 * 60 * 60,
-    }),
-    cookie: {
-      secure: process.env.NODE_ENV === "production", 
-      httpOnly: true,
-      sameSite: "none", 
-      maxAge: 24 * 60 * 60 * 1000, 
-    },
-  })
-);
 import userRoutes from "./routes/user.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
 import passwordRoutes from "./routes/password.routes.js";
@@ -53,6 +33,10 @@ app.use("/password", passwordRoutes);
 app.use("/qr", qrRoutes);
 app.use("/upload", uploadRoutes);
 
+
+app.use(session({secret:"secret",cookie:{maxAge:60000,httpOnly:false,secure:false}}));
+
+
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -63,12 +47,6 @@ const connectDB = async () => {
   }
 };
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res
-    .status(500)
-    .json({ error: "Internal Server Error", details: err.message });
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
