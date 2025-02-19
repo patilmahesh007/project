@@ -15,7 +15,20 @@ app.use(
 );
 
 app.use(express.json());
-app.use(session({secret:"secret",SameSite: "none",Secure: true,cookie:{maxAge:60000,httpOnly:false,secure:false}}));
+
+
+
+app.use(session({
+  secret: "secret",
+  resave: false,
+  saveUninitialized: true, 
+  cookie: {
+      maxAge: 60000,
+      httpOnly: true,
+      secure: true,
+      sameSite: "None"
+  }
+}));
 
 import userRoutes from "./routes/user.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";

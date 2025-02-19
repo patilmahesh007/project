@@ -44,7 +44,9 @@ function Login() {
     }
 
     try {
-      const response = await api.post('/auth/login', formData);
+      const response = await api.post('/auth/login', formData);   
+      // const response= await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/login`, formData,{ withCredentials: true });
+      console.log(response);
       if (response.data.success) {
         const { userResponse } = response.data;
         localStorage.setItem('user', JSON.stringify(userResponse));
