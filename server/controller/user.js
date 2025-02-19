@@ -6,33 +6,33 @@ import getUserIdFromSession from "../utils/getUserID.js";
 import Membership from "./../model/membership.model.js";
 
 const postSignup = async (req, res) => {
-  const { user, password, email, role } = req.body; 
+  const { user, password, email, role } = req.body;
   if (!user || !password || !email) {
     return res.json({ message: "All fields are required" });
   }
-  
+
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.json({ message: "User already exists" });
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     const newUser = new User({
-        user,
-        password: hashedPassword,
-        email,
-        role: role ? role.toUpperCase() : "USER",
-      });    await newUser.save();
-    
+      user,
+      password: hashedPassword,
+      email,
+      role: role ? role.toUpperCase() : "USER",
+    }); await newUser.save();
+
     res.json({ success: true, message: "User registered successfully" });
   } catch (err) {
     res.json({ message: err.message });
   }
 };
 
- const postLogin = async (req, res) => {
+const postLogin = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.json({ message: "All fields are required" });
@@ -51,9 +51,9 @@ const postSignup = async (req, res) => {
 
     const membership = await Membership.findOne({ userId: user._id });
 
-    const userResponse = { 
+    const userResponse = {
       _id: user._id,
-      name: user.user, 
+      name: user.user,
       email: user.email,
       mobile: user.mobile,
       role: user.role,
@@ -65,7 +65,7 @@ const postSignup = async (req, res) => {
 
     const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
     req.session.token = jwtToken;
-
+    console.log(req.session.token)
     res.json({ success: true, message: "Login successful", userResponse });
   } catch (err) {
     console.error("Login error:", err);
@@ -90,7 +90,7 @@ const getUserRole = async (req, res) => {
   }
 };
 
- const getUserProfile = async (req, res) => {
+const getUserProfile = async (req, res) => {
   try {
     const userId = getUserIdFromSession(req);
     if (!userId) {
@@ -108,4 +108,4 @@ const getUserRole = async (req, res) => {
   }
 };
 
-export { postSignup, postLogin,getUserRole,getUserProfile };
+export { postSignup, postLogin, getUserRole, getUserProfile };

@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://project-gamma-eight-28.vercel.app",
     credentials: true,
   })
 );
@@ -25,8 +25,8 @@ app.use(session({
   cookie: {
       maxAge: 60000,
       httpOnly: true,
-      secure: true,
-      sameSite: "None"
+      // secure: true,
+      // sameSite: "None"
   }
 }));
 
