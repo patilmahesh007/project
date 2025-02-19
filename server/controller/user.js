@@ -63,7 +63,7 @@ const postSignup = async (req, res) => {
       }
     };
 
-    const jwtToken = jwt.sign({ _id:user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
     req.session.token = jwtToken;
 
     res.json({ success: true, message: "Login successful", userResponse });
