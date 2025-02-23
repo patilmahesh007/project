@@ -52,7 +52,6 @@ app.use("/qr", qrRoutes);
 app.use("/upload", uploadRoutes);
 
 
-app.use(session({ secret: "secret", cookie: { maxAge: 60000, httpOnly: false, secure: false } }));
 
 
 const connectDB = async () => {
