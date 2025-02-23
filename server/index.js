@@ -19,7 +19,7 @@ app.use(express.json());
 dotenv.config();
 
 app.use(cors({
-  origin:"http://localhost:5173",
+  origin: "http://localhost:5173",
   credentials: true
 }));
 
@@ -29,12 +29,12 @@ app.use(cors({
 app.use(session({
   secret: "secret",
   resave: false,
-  saveUninitialized: true, 
+  saveUninitialized: true,
   cookie: {
-      secure: false,
-      sameSite: "none",
-      maxAge: 60000,
-      httpOnly: true,
+    secure: false,
+    sameSite: "None",
+    maxAge: 60000,
+    httpOnly: true,
   }
 }));
 
@@ -50,7 +50,7 @@ app.use("/qr", qrRoutes);
 app.use("/upload", uploadRoutes);
 
 
-app.use(session({secret:"secret",cookie:{maxAge:60000,httpOnly:false,secure:false}}));
+app.use(session({ secret: "secret", cookie: { maxAge: 60000, httpOnly: false, secure: false } }));
 
 
 const connectDB = async () => {
