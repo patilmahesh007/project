@@ -64,7 +64,16 @@ const postLogin = async (req, res) => {
     };
 
     const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
-    req.session.token = jwtToken;
+    req.cookie("token", jwtToken,{
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 60000,
+      path: '/',
+      domain: '.onrender.com' 
+    });
+
+
     console.log(req.session.token)
     res.json({ success: true, message: "Login successful", userResponse });
   } catch (err) {
