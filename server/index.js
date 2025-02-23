@@ -19,7 +19,7 @@ app.use(express.json());
 dotenv.config();
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://project-1121.onrender.com",
   credentials: true
 }));
 
