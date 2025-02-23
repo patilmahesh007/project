@@ -3,18 +3,26 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import session from "express-session";
-dotenv.config();
+
+
+
+import userRoutes from "./routes/user.routes.js";
+import membershipRoutes from "./routes/membership.routes.js";
+import passwordRoutes from "./routes/password.routes.js";
+import qrRoutes from "./routes/qr.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
+
+
 
 const app = express();
-
-app.use(
-  cors({
-    origin: "https://project-gamma-eight-28.vercel.app/"||"http://localhost:5220",
-    credentials: true,
-  })
-);
-
 app.use(express.json());
+dotenv.config();
+
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials: true
+}));
+
 
 
 
@@ -23,18 +31,13 @@ app.use(session({
   resave: false,
   saveUninitialized: true, 
   cookie: {
+      secure: false,
+      sameSite: "none",
       maxAge: 60000,
       httpOnly: true,
-      secure: true,
-      sameSite: "None"
   }
 }));
 
-import userRoutes from "./routes/user.routes.js";
-import membershipRoutes from "./routes/membership.routes.js";
-import passwordRoutes from "./routes/password.routes.js";
-import qrRoutes from "./routes/qr.routes.js";
-import uploadRoutes from "./routes/upload.routes.js";
 
 app.get("/health", (req, res) => {
   res.json({ success: true, message: "Server is healthy" });
