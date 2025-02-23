@@ -31,13 +31,12 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: true,
-    sameSite: "none",
-    maxAge: 60000,
     httpOnly: true,
-    path: "/",
-    // domain: "localhost"
-    
+    secure: true,
+    sameSite: 'none',
+    maxAge: 60000,
+    path: '/',
+    domain: '.onrender.com' 
   }
 }));
 
