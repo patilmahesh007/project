@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-// const verify = (req, res, next) => {
+const verify = (req, res, next) => {
 //   if (!req.session || !req.session.token) {
 //     return res.status(401).json({ message: "Unauthorized: No session found" });
 //   }
@@ -11,6 +11,6 @@ import jwt from "jsonwebtoken";
 //   } catch (error) {
 //     return res.status(403).json({ message: "Forbidden: Invalid token" });
 //   }
-// };
+};
 
 export default verify;
