@@ -1,15 +1,16 @@
 const getUserIdFromSession = (req) => {
   try {
-    // Ensure the "user-info" cookie exists
-    if (!req.cookies || !req.cookies["user-info"]) return null;
-    
-    // Parse the JSON string stored in the cookie
+    // Check if the cookie exists
+    if (!req.cookies || !req.cookies["user-info"]) {
+      console.error("No 'user-info' cookie found");
+      return null;
+    }
+    // Parse the cookie value
     const userInfo = JSON.parse(req.cookies["user-info"]);
-    
-    // Return the _id field from the parsed object
-    return userInfo._id;
+    // Return the user ID from the nested userResponse
+    return userInfo.userResponse && userInfo.userResponse._id ? userInfo.userResponse._id : null;
   } catch (error) {
-    console.error("Error reading user-info cookie:", error);
+    console.error("Error parsing 'user-info' cookie:", error);
     return null;
   }
 };
