@@ -1,18 +1,30 @@
-import QRCode from "qrcode";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
+import QRCode from "qrcode";
 import QRCodeModel from "./../model/qr.model.js";
 import User from "../model/user.model.js";
 import Membership from "../model/membership.model.js";
 import responder from "../utils/responder.js";
-import getUserIdFromSession from "../utils/getUserID.js";
+
+const getUserIdFromUserInfoCookie = (req) => {
+  try {
+    if (!req.cookies || !req.cookies["user-info"]) {
+      console.error("user-info cookie not found");
+      return null;
+    }
+    const userInfo = JSON.parse(req.cookies["user-info"]);
+    return userInfo._id;
+  } catch (error) {
+    console.error("Error reading user-info cookie:", error);
+    return null;
+  }
+};
 
 export const generateQRCode = async (req, res) => {
-
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserIdFromUserInfoCookie(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No session token", false, 401);
+      return responder(res, null, "Unauthorized: No user info cookie", false, 401);
     }
     const today = moment().startOf("day");
     const user = await User.findById(userId);
@@ -62,9 +74,9 @@ export const generateQRCode = async (req, res) => {
 
 export const scanQRCode = async (req, res) => {
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserIdFromUserInfoCookie(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No session token", false, 401);
+      return responder(res, null, "Unauthorized: No user info cookie", false, 401);
     }
     const user = await User.findById(userId);
     if (!user) {
@@ -97,15 +109,16 @@ export const scanQRCode = async (req, res) => {
       200
     );
   } catch (error) {
+    console.error("Error in scanQRCode:", error.message);
     return responder(res, null, error.message, false, 500);
   }
 };
 
 export const getQRCode = async (req, res) => {
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserIdFromUserInfoCookie(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No session token", false, 401);
+      return responder(res, null, "Unauthorized: No user info cookie", false, 401);
     }
     const today = moment().startOf("day");
     const qrCode = await QRCodeModel.findOne({
@@ -123,6 +136,7 @@ export const getQRCode = async (req, res) => {
       200
     );
   } catch (error) {
+    console.error("Error in getQRCode:", error.message);
     return responder(res, null, error.message, false, 500);
   }
 };
@@ -138,6 +152,7 @@ export const getScanLogs = async (req, res) => {
       200
     );
   } catch (error) {
+    console.error("Error in getScanLogs:", error.message);
     return responder(res, null, error.message, false, 500);
   }
 };
@@ -154,6 +169,7 @@ export const expireOldQRCodes = async (req, res) => {
       200
     );
   } catch (error) {
+    console.error("Error in expireOldQRCodes:", error.message);
     return responder(res, null, error.message, false, 500);
   }
 };
