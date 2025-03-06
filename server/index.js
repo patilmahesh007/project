@@ -22,7 +22,7 @@ import uploadRoutes from "./routes/upload.routes.js";
 // Define CORS options for your production frontend
 const corsOptions = {
   origin: "https://project-1121.onrender.com", // Frontend URL
-  credentials: true,
+  credentials: true,  
 };
 
 // Use CORS middleware with the defined options

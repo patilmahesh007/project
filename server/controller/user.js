@@ -62,23 +62,23 @@ const postLogin = async (req, res) => {
       },
     };
 
-    const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    // const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
     
     // Store token in session (server-side)
-    req.session.token = jwtToken;
+    // req.session.token = jwtToken;
     
     // Set token in an HTTP-only cookie (not accessible to JS)
-    res.cookie("token", jwtToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Requires HTTPS in production
-      sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    });
+    // res.cookie("token", jwtToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production", // Requires HTTPS in production
+    //   sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax",
+    //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    // });
 
     // Optionally set a visible cookie with user info (if needed; be cautious with sensitive data)
     res.cookie("user-info", JSON.stringify(userResponse), {
       httpOnly: false, // Accessible to client-side JS
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "prod  uction",
       sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
