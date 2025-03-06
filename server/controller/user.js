@@ -32,7 +32,6 @@ const postSignup = async (req, res) => {
     res.json({ message: err.message });
   }
 };
-
 const postLogin = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -51,7 +50,6 @@ const postLogin = async (req, res) => {
     }
 
     const membership = await Membership.findOne({ userId: user._id });
-
     const userResponse = {
       _id: user._id,
       name: user.user,
@@ -61,20 +59,28 @@ const postLogin = async (req, res) => {
       membership: {
         isActive: membership ? membership.isActive : false,
         expiryDate: membership ? membership.expiryDate : null,
-      }
+      },
     };
 
     const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
     
-    // Store the token in session
+    // Store token in session (server-side)
     req.session.token = jwtToken;
     
-    // Also set the token in an HTTP-only cookie
+    // Set token in an HTTP-only cookie (not accessible to JS)
     res.cookie("token", jwtToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // true in production (requires HTTPS)
-      sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax", // Adjust if needed
+      secure: process.env.NODE_ENV === "production", // Requires HTTPS in production
+      sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+
+    // Optionally set a visible cookie with user info (if needed; be cautious with sensitive data)
+    res.cookie("user-info", JSON.stringify(userResponse), {
+      httpOnly: false, // Accessible to client-side JS
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax",
+      maxAge: 24 * 60 * 60 * 1000,
     });
     
     console.log("Session token:", req.session.token);

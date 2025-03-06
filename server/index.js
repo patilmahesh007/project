@@ -11,10 +11,12 @@ import membershipRoutes from "./routes/membership.routes.js";
 import passwordRoutes from "./routes/password.routes.js";
 import qrRoutes from "./routes/qr.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(cors({
   origin: "https://project-1121.onrender.com", 
