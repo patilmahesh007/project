@@ -6,7 +6,6 @@ import User from "../model/user.model.js";
 import Membership from "../model/membership.model.js";
 import responder from "../utils/responder.js";
 
-// Helper to get user ID from the "user-info" cookie
 const getUserIdFromUserInfoCookie = (req) => {
   try {
     if (!req.cookies || !req.cookies["user-info"]) {

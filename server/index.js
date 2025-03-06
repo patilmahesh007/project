@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config();
+const app = express();
 
+app.use(cookieParser());
+app.use(express.json());
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -14,11 +17,7 @@ import passwordRoutes from "./routes/password.routes.js";
 import qrRoutes from "./routes/qr.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 
-const app = express();
 
-// Parse cookies and JSON bodies
-app.use(cookieParser());
-app.use(express.json());
 
 // Define CORS options for your production frontend
 const corsOptions = {
