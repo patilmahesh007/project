@@ -18,9 +18,11 @@ app.use(express.json());
 
 app.use(cors({
   origin: "https://project-1121.onrender.com", 
-  credentials: true,
+  credentials: true
 }));
 
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(
   session({
     name: "widget_session", 
