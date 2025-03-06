@@ -8,7 +8,7 @@ function membership() {
             <Navbar />
             <MembershipPurchase />
             <Footer />
-        </div>
+        </div> 
     )
 }
 

@@ -1,5 +1,5 @@
 import express from "express";
-import upload from "../utils/upload.js"; // Ensure this points to your multer/cloudinary config
+import upload from "../utils/upload.js";
 import { uploadProfilePhotoController } from "../controller/uploadController.js";
 import verify from "../middleware/verify.js";
 
