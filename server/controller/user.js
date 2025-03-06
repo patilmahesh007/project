@@ -24,7 +24,8 @@ const postSignup = async (req, res) => {
       password: hashedPassword,
       email,
       role: role ? role.toUpperCase() : "USER",
-    }); await newUser.save();
+    });
+    await newUser.save();
 
     res.json({ success: true, message: "User registered successfully" });
   } catch (err) {
@@ -64,16 +65,25 @@ const postLogin = async (req, res) => {
     };
 
     const jwtToken = jwt.sign({ userResponse }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    
+    // Store the token in session
     req.session.token = jwtToken;
     
-    console.log(req.session.token)
+    // Also set the token in an HTTP-only cookie
+    res.cookie("token", jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // true in production (requires HTTPS)
+      sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax", // Adjust if needed
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+    
+    console.log("Session token:", req.session.token);
     res.json({ success: true, message: "Login successful", userResponse });
   } catch (err) {
     console.error("Login error:", err);
     res.json({ message: err.message });
   }
 };
-
 
 const getUserRole = async (req, res) => {
   const userId = getUserIdFromSession(req);
