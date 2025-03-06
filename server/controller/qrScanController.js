@@ -5,21 +5,19 @@ import QRCodeModel from "./../model/qr.model.js";
 import User from "../model/user.model.js";
 import Membership from "../model/membership.model.js";
 import responder from "../utils/responder.js";
-
 const getUserIdFromUserInfoCookie = (req) => {
   try {
     if (!req.cookies || !req.cookies["user-info"]) {
-      console.error("user-info cookie not found");
+      console.error("No 'user-info' cookie found");
       return null;
     }
     const userInfo = JSON.parse(req.cookies["user-info"]);
-    return userInfo._id;
+    return userInfo.userResponse && userInfo.userResponse._id ? userInfo.userResponse._id : null;
   } catch (error) {
-    console.error("Error reading user-info cookie:", error);
+    console.error("Error reading 'user-info' cookie:", error);
     return null;
   }
 };
-
 export const generateQRCode = async (req, res) => {
   try {
     console.log("Incoming cookies:", req.cookies);
