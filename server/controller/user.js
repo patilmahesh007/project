@@ -64,6 +64,7 @@ const postSignup = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "None", 
       maxAge: 24 * 60 * 60 * 1000, 
+      domain: process.env.COOKIE_DOMAIN || ".onrender.com",
     };
 
     res.cookie("token", token, cookieOptions);
