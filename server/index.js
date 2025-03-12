@@ -24,7 +24,9 @@ app.use(cookieParser());
 app.use(express.json());
 
 const corsOptions = {
-  origin: "https://project-1121.onrender.com",
+  origin: process.env.NODE_ENV === "production" 
+    ? "https://project-1121.onrender.com" 
+    : "http://localhost:5173",
   credentials: true,
 };
 app.use(cors(corsOptions));
