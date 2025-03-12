@@ -16,7 +16,7 @@ import uploadRoutes from "./routes/upload.routes.js";
 
 const app = express();
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV==="production") {
   app.set("trust proxy", 1);
 }
 
@@ -41,7 +41,7 @@ app.use("/membership", membershipRoutes);
 app.use("/password", passwordRoutes);
 app.use("/qr", qrRoutes);
 app.use("/upload", uploadRoutes);
-
+console.log(process.env.NODE_ENV)
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
