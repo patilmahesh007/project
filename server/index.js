@@ -1,58 +1,41 @@
 import dotenv from "dotenv";
 dotenv.config();
-const app = express();
 
-app.use(cookieParser());
-app.use(express.json());
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import session from "express-session";
 import cookieParser from "cookie-parser";
 
-// Import routes
+import sessionMiddleware from "./middleware/session.js";
+
 import userRoutes from "./routes/user.routes.js";
 import membershipRoutes from "./routes/membership.routes.js";
 import passwordRoutes from "./routes/password.routes.js";
 import qrRoutes from "./routes/qr.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 
+const app = express();
 
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
-// Define CORS options for your production frontend
+app.use(cookieParser());
+app.use(express.json());
+
 const corsOptions = {
-  origin: "https://project-1121.onrender.com", // Frontend URL
-  credentials: true,  
+  origin: "https://project-1121.onrender.com",
+  credentials: true,
 };
-
-// Use CORS middleware with the defined options
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
-// Configure express-session
-app.use(
-  session({
-    name: "widget_session",
-    secret: process.env.SESSION_SECRET || "secret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: true, // Ensure HTTPS in production
-      sameSite: "none", // Allows cross-site cookies (if needed)
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      path: "/",
-      domain: ".onrender.com", // Shared across subdomains of onrender.com
-    },
-  })
-);
+app.use(sessionMiddleware);
 
-// Health check endpoint
 app.get("/health", (req, res) => {
   res.json({ success: true, message: "Server is healthy" });
 });
 
-// Mount routes
 app.use("/auth", userRoutes);
 app.use("/membership", membershipRoutes);
 app.use("/password", passwordRoutes);
@@ -62,7 +45,6 @@ app.use("/upload", uploadRoutes);
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-   
     });
     console.log("✅ Database Connected Successfully");
   } catch (error) {
