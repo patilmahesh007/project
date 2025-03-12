@@ -12,7 +12,7 @@ const getUserIdFromUserInfoCookie = (req) => {
       return null;
     }
     const userInfo = JSON.parse(req.cookies["user-info"]);
-    return userInfo.userResponse && userInfo.userResponse._id ? userInfo.userResponse._id : null;
+    return userInfo._id ? userInfo._id : null; // Directly access _id from parsed cookie
   } catch (error) {
     console.error("Error reading 'user-info' cookie:", error);
     return null;
