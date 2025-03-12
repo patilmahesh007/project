@@ -59,10 +59,12 @@ const postSignup = async (req, res) => {
     });
     
     const cookieOptions = {
-      httpOnly: true, 
-      maxAge: 24 * 60 * 60 * 1000,
-      domain: process.env.NODE_ENV === "production" ? ".onrender.com" : undefined,
-      path: "/",
+      domain: process.env.COOKIE_DOMAIN || ".onrender.com", 
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",    
+      maxAge: 24 * 60 * 60 * 1000, 
+      domain: process.env.COOKIE_DOMAIN || ".onrender.com",
     };
 
     res.cookie("token", token, cookieOptions);
