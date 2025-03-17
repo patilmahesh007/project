@@ -71,38 +71,38 @@ function App() {
       <Navbar bg="transparent" />
 
       <div
-        className="relative w-full h-screen bg-cover bg-center flex items-center justify-start px-10 md:px-20"
+        className="relative w-full h-screen bg-cover bg-center flex items-center justify-center sm:justify-start px-4 sm:px-10 md:px-20"
         style={{ backgroundImage: `url(${gym})` }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
-        <div className="relative z-10 text-gray-200 space-y-1">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
+        <div className="relative z-10 text-gray-200 space-y-2 text-center sm:text-left">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
             Train Hard<br /> Stay Strong<br /> Conquer Limits!
           </h1>
-          <h2 className="text-lg md:text-xl lg:text-1xl pl-1 font-medium text-gray-300">
-            Start your fitness journey today!<br /><br />
+          <h2 className="text-base sm:text-lg md:text-xl pl-1 font-medium text-gray-300">
+            Start your fitness journey today!
           </h2>
           <NavLink
             to="/membership"
-            className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold text-lg transition duration-300 hover:bg-orange-600 active:bg-orange-700"
+            className="inline-block mt-4 bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold text-base sm:text-lg transition duration-300 hover:bg-orange-600 active:bg-orange-700"
           >
             Join Now
           </NavLink>
         </div>
       </div>
 
-      <div className="bg-black text-gray-200 py-8 px-20">
-        <p className="text-orange-700">Reviews</p>
-        <h1 className="text-3xl md:text-4xl font-bold">
+      <div className="bg-black text-gray-200 py-8 px-4 sm:px-8 md:px-20">
+        <p className="text-orange-700 text-sm sm:text-base">Reviews</p>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
           "Don't Just Take Our Word—Hear It From the Iron Warriors!"
         </h1>
-        <div style={horizontalContainerStyle} ref={containerRef} className="no-scrollbar">
+        <div style={horizontalContainerStyle} ref={containerRef} className="no-scrollbar mt-4">
           <InfiniteScroll
             pageStart={0}
             loadMore={loadMore}
             hasMore={hasMore}
             loader={
-              <div className="loader text-gray-400" key={0}>
+              <div className="loader text-gray-400 text-center py-2" key={0}>
                 Loading...
               </div>
             }
