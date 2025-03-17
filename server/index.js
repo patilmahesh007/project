@@ -24,8 +24,9 @@ app.use(cookieParser());
 app.use(express.json());
 
 const corsOptions = {
-  origin:  "https://project-1121.onrender.com" 
+  origin:  "http://localhost:5173" 
  , credentials: true,
+ allowedHeaders: ['Content-Type', 'Authorization']
 };
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
@@ -41,7 +42,6 @@ app.use("/membership", membershipRoutes);
 app.use("/password", passwordRoutes);
 app.use("/qr", qrRoutes);
 app.use("/upload", uploadRoutes);
-console.log(process.env.NODE_ENV)
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {

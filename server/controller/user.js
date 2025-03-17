@@ -2,8 +2,8 @@ import User from "../model/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import responder from "../utils/responder.js";
-import getUserIdFromSession from "../utils/getUserID.js";
-import Membership from "./../model/membership.model.js";
+import getUserID from "../utils/getUserID.js";
+import Membership from "../model/membership.model.js";
 
 const postSignup = async (req, res) => {
   const { user, password, email, role } = req.body;
@@ -32,7 +32,8 @@ const postSignup = async (req, res) => {
     res.json({ message: err.message });
   }
 };
- const postLogin = async (req, res) => {
+
+const postLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     
@@ -63,7 +64,7 @@ const postSignup = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "None",    
-      maxAge: 24 * 60 * 60 * 1000, 
+      maxAge: 24 * 60 * 60 * 1000,
       domain: process.env.COOKIE_DOMAIN || ".onrender.com",
     };
 
@@ -74,6 +75,7 @@ const postSignup = async (req, res) => {
       success: true,
       message: "Login successful",
       userResponse: userInfo,
+      token: token
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -82,7 +84,7 @@ const postSignup = async (req, res) => {
 };
 
 const getUserRole = async (req, res) => {
-  const userId = getUserIdFromSession(req);
+  const userId = getUserID(req);
   if (!userId) {
     return responder(res, null, "Unauthorized: No session token", false, 401);
   }
@@ -99,7 +101,7 @@ const getUserRole = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserID(req);
     if (!userId) {
       return responder(res, null, "Unauthorized: No session token", false, 401);
     }

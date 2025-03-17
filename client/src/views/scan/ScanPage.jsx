@@ -4,7 +4,6 @@ import Footer from "../../components/Footer";
 import React from "react";
 const ScanPage = () => {
   const handleScanSuccess = (scanData) => {
-    console.log("Scan Success:", scanData);
     alert(`Entry granted at: ${scanData.scanTime}`);
   };
 

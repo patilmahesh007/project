@@ -5,44 +5,23 @@ import QRCodeModel from "./../model/qr.model.js";
 import User from "../model/user.model.js";
 import Membership from "../model/membership.model.js";
 import responder from "../utils/responder.js";
-const getUserIdFromUserInfoCookie = (req) => {
-  try {
-    if (!req.cookies || !req.cookies["user-info"]) {
-      console.error("No 'user-info' cookie found");
-      return null;
-    }
-    const userInfo = JSON.parse(req.cookies["user-info"]);
-    return userInfo._id ? userInfo._id : null; // Directly access _id from parsed cookie
-  } catch (error) {
-    console.error("Error reading 'user-info' cookie:", error);
-    return null;
-  }
-};
+import getUserIdFromToken from "../utils/getUserID.js";
+
 export const generateQRCode = async (req, res) => {
   try {
-    console.log("Incoming cookies:", req.cookies);
-    const userId = getUserIdFromUserInfoCookie(req);
+    const userId = getUserIdFromToken(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No user info cookie", false, 401);
+      return responder(res, null, "Unauthorized: No token provided", false, 401);
     }
-
     const today = moment().startOf("day");
     const user = await User.findById(userId);
     if (!user) {
       return responder(res, null, "User not found", false, 404);
     }
-
     const membership = await Membership.findOne({ userId, status: "active" });
     if (!membership) {
-      return responder(
-        res,
-        null,
-        "No active membership found, cannot generate QR",
-        false,
-        404
-      );
+      return responder(res, null, "No active membership found, cannot generate QR", false, 404);
     }
-
     const existingQR = await QRCodeModel.findOne({
       userId,
       createdAt: { $gte: today.toDate() },
@@ -56,12 +35,10 @@ export const generateQRCode = async (req, res) => {
         200
       );
     }
-
     const qrId = uuidv4();
     const qrData = JSON.stringify({ qrId, userId });
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
     const expiryDate = moment().endOf("day").toDate();
-
     const newQRCode = new QRCodeModel({
       userId,
       qrId,
@@ -69,7 +46,6 @@ export const generateQRCode = async (req, res) => {
       expiryDate,
     });
     await newQRCode.save();
-
     return responder(
       res,
       { qrId, qrCode: qrCodeBase64 },
@@ -85,11 +61,10 @@ export const generateQRCode = async (req, res) => {
 
 export const scanQRCode = async (req, res) => {
   try {
-    const userId = getUserIdFromUserInfoCookie(req);
+    const userId = getUserIdFromToken(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No user info cookie", false, 401);
+      return responder(res, null, "Unauthorized: No token provided", false, 401);
     }
-
     const user = await User.findById(userId);
     if (!user) {
       return responder(res, null, "User not found", false, 404);
@@ -97,12 +72,10 @@ export const scanQRCode = async (req, res) => {
     if (!(user.role === "ADMIN" || user.role === "SUPER_ADMIN")) {
       return responder(res, null, "Not authorized to scan QR codes", false, 403);
     }
-
     const { qrId } = req.body;
     if (!qrId) {
       return responder(res, null, "QR ID is required", false, 400);
     }
-
     const today = moment().startOf("day");
     const validQR = await QRCodeModel.findOne({
       userId,
@@ -115,11 +88,9 @@ export const scanQRCode = async (req, res) => {
     if (validQR.scanned) {
       return responder(res, null, "QR code already used", false, 400);
     }
-
     validQR.scannedAt = new Date();
     validQR.scanned = true;
     await validQR.save();
-
     return responder(
       res,
       { userId, qrId, scanTime: validQR.scannedAt },
@@ -133,13 +104,13 @@ export const scanQRCode = async (req, res) => {
   }
 };
 
+
 export const getQRCode = async (req, res) => {
   try {
-    const userId = getUserIdFromUserInfoCookie(req);
+    const userId = getUserIdFromToken(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No user info cookie", false, 401);
+      return responder(res, null, "Unauthorized: No token provided", false, 401);
     }
-
     const today = moment().startOf("day");
     const qrCode = await QRCodeModel.findOne({
       userId,
@@ -148,7 +119,6 @@ export const getQRCode = async (req, res) => {
     if (!qrCode) {
       return responder(res, null, "No QR code found for today", false, 404);
     }
-
     return responder(
       res,
       { qrId: qrCode.qrId, qrCode: qrCode.qrCode },

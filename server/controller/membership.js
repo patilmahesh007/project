@@ -4,7 +4,7 @@ import Razorpay from "razorpay";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import responder from "../utils/responder.js";
-import getUserIdFromSession from "../utils/getUserID.js";
+import getUserIdFromToken from "../utils/getUserID.js";
 
 dotenv.config();
 
@@ -15,9 +15,9 @@ const razorpay = new Razorpay({
 
 export const buyMembership = async (req, res) => {
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserIdFromToken(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No session token", false, 401);
+      return responder(res, null, "Unauthorized: No token provided", false, 401);
     }
 
     const { planName, price, duration, paymentId } = req.body;
@@ -74,6 +74,7 @@ export const buyMembership = async (req, res) => {
     return responder(res, null, "Server error", false, 500);
   }
 };
+
 export const createOrder = async (req, res) => {
   try {
     const { amount, currency = "INR" } = req.body;
@@ -89,10 +90,7 @@ export const createOrder = async (req, res) => {
       payment_capture: 1,
     };
 
-    console.log("Creating Razorpay order with options:", options);
-
     const order = await razorpay.orders.create(options);
-    console.log("Order created:", order);
 
     return responder(
       res,
@@ -110,12 +108,11 @@ export const createOrder = async (req, res) => {
   }
 };
 
-
 export const getMembership = async (req, res) => {
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserIdFromToken(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No session token", false, 401);
+      return responder(res, null, "Unauthorized: No token provided", false, 401);
     }
     const memberships = await Membership.find({ userId, status: "active" });
     if (!memberships || memberships.length === 0) {
@@ -130,9 +127,9 @@ export const getMembership = async (req, res) => {
 
 export const cancelMembership = async (req, res) => {
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserIdFromToken(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No session token", false, 401);
+      return responder(res, null, "Unauthorized: No token provided", false, 401);
     }
     const { membershipId } = req.body;
     if (!membershipId) {
@@ -153,9 +150,9 @@ export const cancelMembership = async (req, res) => {
 
 export const checkMembership = async (req, res) => {
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserIdFromToken(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No session token", false, 401);
+      return responder(res, null, "Unauthorized: No token provided", false, 401);
     }
     const memberships = await Membership.find({
       userId,

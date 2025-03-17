@@ -7,7 +7,6 @@ cron.schedule('0 0 * * *', async () => {
     for (const user of users) {
       await generateQRCode(user); 
     }
-    console.log("Daily QR codes generated successfully!");
   } catch (error) {
     console.error("Error generating daily QR codes:", error);
   }

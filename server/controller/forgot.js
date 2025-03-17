@@ -32,7 +32,6 @@ export const forgotPassword = async (req, res) => {
             ${resetUrl}
             If you did not request this, please ignore this email.
         `;
-console.log(message)
         try {
             await sendEmail({
                 email: user.email,

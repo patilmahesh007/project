@@ -1,12 +1,12 @@
 import User from "../model/user.model.js";
 import responder from "../utils/responder.js";
-import getUserIdFromSession from "../utils/getUserID.js";
+import getUserIdFromToken from "../utils/getUserID.js";
 
 export const uploadProfilePhotoController = async (req, res) => {
   try {
-    const userId = getUserIdFromSession(req);
+    const userId = getUserIdFromToken(req);
     if (!userId) {
-      return responder(res, null, "Unauthorized: No session token", false, 401);
+      return responder(res, null, "Unauthorized: No token provided", false, 401);
     }
     if (!req.file) {
       return responder(res, null, "No file uploaded", false, 400);
