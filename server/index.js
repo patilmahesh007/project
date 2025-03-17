@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 const corsOptions = {
-  origin:  "http://localhost:5173" 
+  origin:  "https://project-gamma-eight-28.vercel.app" 
  , credentials: true,
  allowedHeaders: ['Content-Type', 'Authorization']
 };
